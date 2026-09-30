@@ -483,6 +483,7 @@ button{cursor:pointer}
 
   <dialog id="memoDialog" class="modal memo-modal">
     <button class="close-btn" data-close>×</button>
+    <div class="modal-danger-bar"><span class="modal-danger-state">STABLE</span><b class="modal-danger-time">05:00</b></div>
     <h2>관찰 메모</h2>
     <textarea id="memo" placeholder="눈에 띈 규칙이나 숫자를 적어두세요."></textarea>
   </dialog>
@@ -1567,7 +1568,7 @@ startBtn.addEventListener('click',e=>{e.preventDefault();startGame(!!readSave())
 newGameBtn.addEventListener('click',e=>{e.preventDefault();startGame(false)});
 hintConfirmCancel.addEventListener('click',cancelHintPurchase);
 hintConfirmUse.addEventListener('click',acceptHintPurchase);
-$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
+$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>{memoDialog.showModal();syncModalDanger()});
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 memo.addEventListener('input',saveGame);
 window.addEventListener('pagehide',saveGame);
