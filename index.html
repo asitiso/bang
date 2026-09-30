@@ -287,6 +287,22 @@ button{cursor:pointer}
 .hint-confirm-actions .primary-btn,.hint-confirm-actions .secondary-btn{margin:0;padding:14px 10px;font-size:14px}
 .hint-result.empty{color:#788693;display:grid;place-items:center;text-align:center}
 
+.modal-danger-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-4px 44px 12px 0;padding:8px 10px;border-radius:10px;background:#0a1118;border:1px solid rgba(255,255,255,.1);font:900 12px ui-monospace,monospace;letter-spacing:.08em}
+.modal-danger-bar .modal-danger-time{font-size:20px;letter-spacing:.04em;color:#fff}.modal-danger-bar .modal-danger-state{font-size:10px;color:#79f5a1}
+.modal.danger-warning{border-color:rgba(255,199,69,.48);box-shadow:0 0 28px rgba(255,184,49,.12),var(--shadow)}
+.modal.danger-warning .modal-danger-state{color:#ffd86f}
+.modal.danger-critical{border-color:rgba(255,116,54,.72);box-shadow:0 0 38px rgba(255,74,31,.2),var(--shadow);animation:modalCriticalPulse 1.1s ease-in-out infinite alternate}
+.modal.danger-critical .modal-danger-state{color:#ff975c}
+.modal.danger-detonation{border-color:#ff435c;box-shadow:0 0 54px rgba(255,37,61,.32),var(--shadow);animation:modalDetonationShake .42s ease-in-out infinite}
+.modal.danger-detonation .modal-danger-state{color:#ff5268}
+.modal.danger-detonation .modal-danger-time{color:#ffdfdf;text-shadow:0 0 16px rgba(255,50,70,.5)}
+@keyframes modalCriticalPulse{from{filter:brightness(.94)}to{filter:brightness(1.08)}}
+@keyframes modalDetonationShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,0)}75%{transform:translate(0,-1px)}}
+.clue.standard-undiscovered{filter:brightness(.46) saturate(.45);overflow:hidden}
+.clue.standard-undiscovered .tag,.clue.standard-undiscovered h3,.clue.standard-undiscovered .clue-art{filter:blur(7px);opacity:.15}
+.clue.standard-undiscovered::after{content:attr(data-find-label);position:absolute;z-index:12;inset:0;display:grid;place-items:center;padding:24px;text-align:center;border-radius:12px;background:radial-gradient(circle at 50% 42%,rgba(255,218,130,.12),transparent 36%),linear-gradient(160deg,rgba(13,18,24,.9),rgba(4,7,10,.94));color:#ffe1a0;font-weight:950;font-size:15px;letter-spacing:.02em;text-shadow:0 2px 12px #000}
+.clue.standard-discovered{animation:standardFound .68s ease-out}
+@keyframes standardFound{0%{filter:brightness(2);transform:scale(.92) rotate(var(--r,0deg))}55%{filter:brightness(1.25);box-shadow:0 0 38px rgba(255,215,116,.48),0 20px 55px rgba(0,0,0,.4)}100%{filter:none;transform:scale(1) rotate(var(--r,0deg))}}
 .modal{width:min(92vw,480px);border:1px solid rgba(255,255,255,.13);border-radius:22px;background:#111821;color:white;box-shadow:var(--shadow);padding:22px}.modal::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}.close-btn{position:absolute;right:10px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:#222c37;color:#fff;font-size:22px}.detail-card{padding-top:18px}.detail-card h2{margin:0 0 8px}.detail-art{min-height:210px;border-radius:16px;margin:18px 0;display:grid;place-items:center;background:#e9e3d6;color:#141414;padding:16px}.detail-note{line-height:1.6;color:#b9c3cc}.keypad-modal{width:min(90vw,390px)}.keypad-head{padding-top:12px;text-align:center}.door-mark{font-size:10px;letter-spacing:.22em;color:#8e9aa6}.code-display{margin:16px auto 8px;width:220px;padding:14px;background:#050708;border-radius:10px;color:#79ffad;font:900 32px monospace;letter-spacing:.18em}.code-message{min-height:22px;color:#9da9b4;font-size:13px}.keypad{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.keypad button{height:58px;border:1px solid #39424d;border-radius:13px;background:#202936;color:#fff;font-size:20px;font-weight:900}.keypad button:active{background:#334153}.keypad .enter{background:#704f1f;border-color:#a87a33;color:#ffe9b3}.keypad .clear{color:#ff8493}.memo-modal textarea{width:100%;height:45vh;resize:none;border-radius:14px;border:1px solid #34404c;background:#0b1118;color:#fff;padding:14px;line-height:1.55;outline:none}.result-modal{text-align:center}.result-modal h2{font-size:30px;margin:4px 0 10px}.result-modal p{color:#b6c0c9;line-height:1.6}.result-modal button{margin-top:12px}
 
 
@@ -428,11 +444,13 @@ button{cursor:pointer}
 
   <dialog id="clueDialog" class="modal">
     <button class="close-btn" data-close>×</button>
+    <div class="modal-danger-bar"><span class="modal-danger-state">STABLE</span><b class="modal-danger-time">05:00</b></div>
     <div id="clueDetail"></div>
   </dialog>
 
   <dialog id="keypadDialog" class="modal keypad-modal">
     <button class="close-btn" data-close>×</button>
+    <div class="modal-danger-bar"><span class="modal-danger-state">STABLE</span><b class="modal-danger-time">05:00</b></div>
     <div class="keypad-head">
       <div class="door-mark">EXIT / 4 DIGITS</div>
       <div id="codeDisplay" class="code-display">····</div>
@@ -443,6 +461,7 @@ button{cursor:pointer}
 
   <dialog id="hintDialog" class="modal hint-modal">
     <button class="close-btn" data-close>×</button>
+    <div class="modal-danger-bar"><span class="modal-danger-state">STABLE</span><b class="modal-danger-time">05:00</b></div>
     <div class="eyebrow">HINT SELECT</div>
     <h2>힌트를 선택하세요</h2>
     <p>새 힌트는 확인 팝업 후 2분이 차감됩니다. 이미 구매한 힌트는 무료로 다시 볼 수 있습니다.</p>
@@ -451,6 +470,7 @@ button{cursor:pointer}
   </dialog>
 
   <dialog id="hintConfirmDialog" class="modal hint-confirm-modal">
+    <div class="modal-danger-bar"><span class="modal-danger-state">STABLE</span><b class="modal-danger-time">05:00</b></div>
     <div class="eyebrow">HINT WARNING</div>
     <h2>힌트를 사용하시겠습니까?</h2>
     <div class="hint-confirm-warning">⚠ 이 힌트를 열면 <b>2분이 차감됩니다</b></div>
@@ -699,6 +719,7 @@ let pendingHintIndex = null;
 let gameActive = false;
 let chainProgress = 0;
 let activeClueIndex = null;
+let discoveredClues = new Set();
 let pendingResumeState = null;
 const SAVE_KEY='time-room-save-v1';
 
@@ -725,6 +746,7 @@ function currentSavePayload(){
     remaining:Math.max(1,Math.floor(remaining||ROOM_DATA[stageIndex].minutes*60)),
     chainProgress:isChainStage()?chainProgress:0,
     usedHints:[...usedHints],
+    discoveredClues:[...discoveredClues],
     memo:memo?.value||'',
     wrongAttempts,
     wrongStreak,
@@ -740,7 +762,7 @@ function saveFreshRoom(index){
   if(index<0||index>=ROOM_DATA.length)return clearSave();
   writeSave({
     version:1,stageIndex:index,remaining:ROOM_DATA[index].minutes*60,
-    chainProgress:0,usedHints:[],memo:'',wrongAttempts:0,wrongStreak:0,scrollLeft:0,savedAt:Date.now()
+    chainProgress:0,usedHints:[],discoveredClues:[],memo:'',wrongAttempts:0,wrongStreak:0,scrollLeft:0,savedAt:Date.now()
   });
 }
 function refreshStartChoices(){
@@ -930,34 +952,58 @@ function startBgmForRoom(){
   let step=0;
   const playMotif=()=>{
     if(!gameActive||!audioCtx||!bgmBus)return;
+    const state=dangerState();
     const base=root*4;
     const pattern=[0,2,1,3,2,0];
-    for(let j=0;j<3;j++){
+    const spacing=state==='detonation'?.20:state==='critical'?.28:state==='warning'?.34:.42;
+    const noteDur=state==='detonation'?.38:state==='critical'?.48:state==='warning'?.58:.72;
+    const noteVol=stageIndex>=10?.011:.009;
+    const burst=state==='detonation'?4:3;
+    for(let j=0;j<burst;j++){
       const idx=pattern[(step+j)%pattern.length];
-      bgmNote(base*scale[idx],j*.42,.72,stageIndex>=10?.011:.009);
+      bgmNote(base*scale[idx],j*spacing,noteDur,noteVol*(state==='detonation'?1.28:state==='critical'?1.14:1));
     }
     step=(step+1)%pattern.length;
+    const gap=state==='detonation'?1900:state==='critical'?2800:state==='warning'?4000:(stageIndex>=10?4800:6200);
+    bgmMotifTimer=setTimeout(playMotif,gap);
   };
   playMotif();
-  bgmMotifTimer=setInterval(playMotif,stageIndex>=10?4800:6200);
 }
 function setBgmUrgency(){
   if(!audioCtx||!bgmBus||!roomTotalSeconds)return;
-  const ratio=remaining/roomTotalSeconds;
-  const target=ratio<=.10?.064:ratio<=.25?.058:ratio<=.50?.053:.05;
+  const state=dangerState();
+  const target=state==='detonation'?.064:state==='critical'?.058:state==='warning'?.053:.05;
   bgmBus.gain.setTargetAtTime(target,audioCtx.currentTime,.28);
   if(bgmFilter){
-    const hz=ratio<=.10?2500:ratio<=.25?2100:ratio<=.50?1750:1550;
+    const hz=state==='detonation'?2500:state==='critical'?2100:state==='warning'?1750:1550;
     bgmFilter.frequency.setTargetAtTime(hz,audioCtx.currentTime,.35);
   }
 }
+function dangerThresholds(){
+  if(!roomTotalSeconds)return {warning:0,critical:0,detonation:0};
+  return {
+    warning:Math.min(roomTotalSeconds*.50,240),
+    critical:Math.min(roomTotalSeconds*.25,120),
+    detonation:Math.min(roomTotalSeconds*.10,60)
+  };
+}
 function dangerState(){
   if(!roomTotalSeconds)return 'stable';
-  const ratio=remaining/roomTotalSeconds;
-  if(ratio<=.10)return 'detonation';
-  if(ratio<=.25)return 'critical';
-  if(ratio<=.50)return 'warning';
+  const t=dangerThresholds();
+  if(remaining<=t.detonation)return 'detonation';
+  if(remaining<=t.critical)return 'critical';
+  if(remaining<=t.warning)return 'warning';
   return 'stable';
+}
+function syncModalDanger(){
+  const state=dangerState();
+  document.querySelectorAll('dialog.modal').forEach(d=>{
+    d.classList.remove('danger-warning','danger-critical','danger-detonation');
+    if(state!=='stable')d.classList.add('danger-'+state);
+    const time=d.querySelector('.modal-danger-time'),label=d.querySelector('.modal-danger-state');
+    if(time)time.textContent=formatTime(remaining);
+    if(label)label.textContent=state==='stable'?'STABLE':state==='warning'?'WARNING':state==='critical'?'CRITICAL':'DETONATION';
+  });
 }
 function spawnDangerSparks(count=3){
   for(let i=0;i<count;i++){
@@ -1032,6 +1078,7 @@ function updateTimer(){
   timerEl.classList.toggle('warning',dangerLevel==='warning'||dangerLevel==='critical');
   timerEl.classList.toggle('danger',dangerLevel==='detonation');
   setBgmUrgency();
+  syncModalDanger();
   tensionPulse();
 }
 function resetDangerState(){
@@ -1176,6 +1223,39 @@ function updateChainLocks(){
     if(cta)cta.textContent=ready?'연쇄 해제 완료 · 4자리 코드 입력':`연쇄 장치 ${chainProgress}/4 · 먼저 단서를 해제`;
   }
 }
+function standardNeedsDiscovery(i){
+  return !isChainStage() && (i===1 || i===3);
+}
+function standardDiscoveryLabel(i){
+  const labels=[
+    ['', '📚 책장 사이를 조사하기', '', '🪟 창가의 흔적 조사하기'],
+    ['', '🖼 뒤집힌 액자 조사하기', '', '🧰 화구함 열어보기'],
+    ['', '📻 신호 장치 조사하기', '', '💡 경고등 패널 조사하기'],
+    ['', '🗺 좌표판 뒤쪽 조사하기', '', '🗄 서랍 잠금 확인하기'],
+    ['', '🏺 문양 보관함 조사하기', '', '🧱 벽면 문양 만져보기'],
+    ['', '🖥 단말기 아래 조사하기', '', '📁 기록함 열어보기'],
+    ['', '📐 작업대 밑 조사하기', '', '🧮 수식판 뒤쪽 조사하기'],
+    ['', '🖨 인쇄 롤러 조사하기', '', '📦 활자 상자 열어보기'],
+    ['', '🔭 망원경 주변 조사하기', '', '🌌 창가 관측 기록 찾기'],
+    ['', '⚠ 제어 패널 조사하기', '', '🔴 코어 주변 조사하기']
+  ];
+  return (labels[stageIndex]||labels[0])[i]||'숨겨진 단서 조사하기';
+}
+function handleClueClick(i,button){
+  if(standardNeedsDiscovery(i)&&!discoveredClues.has(i)){
+    discoveredClues.add(i);
+    button.classList.remove('standard-undiscovered');
+    button.classList.add('standard-discovered');
+    button.removeAttribute('data-find-label');
+    triggerStandardClueFx(i);
+    tone(760,.08,.035,'sine');setTimeout(()=>tone(980,.10,.03,'sine'),90);
+    showChainToast(`숨겨진 단서 발견 · CLUE ${i+1}`);
+    saveGame();
+    setTimeout(()=>button.classList.remove('standard-discovered'),760);
+    return;
+  }
+  openClue(i);
+}
 function renderRoom(){
   const d=ROOM_DATA[stageIndex];
   const restored=pendingResumeState&&pendingResumeState.stageIndex===stageIndex?pendingResumeState:null;
@@ -1184,6 +1264,7 @@ function renderRoom(){
   activeClueIndex=null;
   wrongAttempts=restored?Math.max(0,restored.wrongAttempts||0):0;
   wrongStreak=restored?Math.max(0,restored.wrongStreak||0):0;
+  discoveredClues=new Set(restored?.discoveredClues||[]);
   inputLocked=false;clearInterval(inputLockTimer);inputLockTimer=null;
   stageNoEl.textContent=`ROOM ${String(stageIndex+1).padStart(2,'0')}`;stageNameEl.textContent=d.name;buildProgress();
   roomEl.className=`room room-theme-${d.theme}${isChainStage()?` chain-stage chain-stage-${chainStageNumber()} chain-progress-0`:` standard-stage standard-stage-${stageIndex+1}`}`;
@@ -1194,11 +1275,11 @@ function renderRoom(){
     ${standardFxMarkup()}
     ${chainFxMarkup()}
     <div class="prop lamp"></div><div class="prop desk"></div><div class="prop shelf"></div><div class="prop window"></div>
-    ${d.clues.map((c,i)=>{const p=cluePosition(i);const chainClass=isChainStage()?(i===0?' chain-current':' chain-locked'):'';const device=isChainStage()?`<span class="device-frame"><span class="device-cover ${chainCoverType()}"><strong>${chainCoverLabel(i)}</strong></span></span>`:'';return `<button class="clue${chainClass}" data-clue="${i}" style="left:${p.l}px;top:${p.t}px;--r:${p.r}" ${isChainStage()&&i>0?'disabled':''}>${device}<div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
+    ${d.clues.map((c,i)=>{const p=cluePosition(i);const chainClass=isChainStage()?(i===0?' chain-current':' chain-locked'):'';const hiddenClass=standardNeedsDiscovery(i)&&!discoveredClues.has(i)?' standard-undiscovered':'';const findLabel=hiddenClass?` data-find-label="${standardDiscoveryLabel(i)}"`:'';const device=isChainStage()?`<span class="device-frame"><span class="device-cover ${chainCoverType()}"><strong>${chainCoverLabel(i)}</strong></span></span>`:'';return `<button class="clue${chainClass}${hiddenClass}" data-clue="${i}"${findLabel} style="left:${p.l}px;top:${p.t}px;--r:${p.r}" ${isChainStage()&&i>0?'disabled':''}>${device}<div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
     <button class="exit-zone ${isChainStage()?'chain-locked':''}" id="exitDoor" aria-label="4자리 번호키 출구문">
       <div class="door"><div class="keypad-preview"><div class="slots">••••</div><div class="keys">${'<i></i>'.repeat(12)}</div></div><div class="door-cta">${isChainStage()?'연쇄 장치 0/4 · 먼저 단서를 해제':'4자리 코드를 입력해 탈출'}</div></div>
     </button>`;
-  roomEl.querySelectorAll('.clue').forEach(b=>b.addEventListener('click',()=>openClue(+b.dataset.clue)));
+  roomEl.querySelectorAll('.clue').forEach(b=>b.addEventListener('click',()=>handleClueClick(+b.dataset.clue,b)));
   $('#exitDoor').addEventListener('click',openKeypad);
   viewport.scrollLeft=0;hintIndex=0;usedHints=new Set(restored?.usedHints||[]);entered='';memo.value=restored?.memo||'';
   updateChainLocks();
@@ -1221,6 +1302,7 @@ function submitChainAnswer(i){
     msg.textContent=`장치가 반응하지 않습니다. −${seconds}초${inputLocked?' · 5초 입력 잠금':''}`;
     input.value='';if(!inputLocked)input.focus();return;
   }
+  wrongStreak=0;
   chainProgress=i+1;
   msg.textContent=chainProgress<4?`해제 성공. 방 안의 다음 장치가 열립니다.`:'마지막 장치 해제. 출구 시스템에 전원이 들어옵니다.';
   tone(680,.08,.045);setTimeout(()=>tone(900,.1,.035),90);
@@ -1244,7 +1326,7 @@ function openClue(i){
     }
   }
   clueDetail.innerHTML=`<div class="detail-card"><div class="eyebrow">${c.symbol} / CLUE ${i+1}</div><h2>${c.title}</h2><div class="detail-art clue-art ${c.kind}">${c.art}</div><p class="detail-note">${c.note}</p>${chainPanel}</div>`;
-  clueDialog.showModal();tone(430,.05,.02);
+  clueDialog.showModal();syncModalDanger();tone(430,.05,.02);
   if(isChainStage() && i===chainProgress){
     const input=$('#chainAnswer'), submit=$('#chainSubmit');
     if(submit)submit.addEventListener('click',()=>submitChainAnswer(i));
@@ -1256,7 +1338,7 @@ function buildKeypad(){
   $('#keypad').innerHTML=labels.map(x=>`<button class="${x==='C'?'clear':''} ${x==='↵'?'enter':''}" data-key="${x}">${x}</button>`).join('');
   $('#keypad').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>keyPress(b.dataset.key)));
 }
-function openKeypad(){if(isChainStage()&&chainProgress<4){showChainToast(`연쇄 장치를 먼저 해제하세요 · ${chainProgress}/4`);tone(140,.12,.035,'sawtooth');return}entered='';codeMessage.textContent=isChainStage()?'해제한 네 숫자를 순서대로 입력하세요':'네 자리 암호를 입력하세요';refreshCode();keypadDialog.showModal();tone(520,.07,.025)}
+function openKeypad(){if(isChainStage()&&chainProgress<4){showChainToast(`연쇄 장치를 먼저 해제하세요 · ${chainProgress}/4`);tone(140,.12,.035,'sawtooth');return}entered='';codeMessage.textContent=isChainStage()?'해제한 네 숫자를 순서대로 입력하세요':'네 자리 암호를 입력하세요';refreshCode();keypadDialog.showModal();syncModalDanger();tone(520,.07,.025)}
 function refreshCode(){codeDisplay.textContent=(entered+'····').slice(0,4)}
 function keyPress(k){
   if(inputLocked){codeMessage.textContent='입력 시스템 잠금 중입니다.';return}
@@ -1264,7 +1346,7 @@ function keyPress(k){
   if(k==='C'){entered='';refreshCode();return}
   if(k==='↵'){
     if(entered.length!==4){codeMessage.textContent='네 자리를 모두 입력하세요.';return}
-    if(entered===ROOM_DATA[stageIndex].answer){roomSolved()}
+    if(entered===ROOM_DATA[stageIndex].answer){wrongStreak=0;roomSolved()}
     else{
       const seconds=applyMistakePenalty();
       codeMessage.textContent=`오답 −${seconds}초${inputLocked?' · 5초 입력 잠금':''}`;
@@ -1416,8 +1498,10 @@ function revealHint(i,already=false){
 function confirmHintPurchase(i){
   const c=ROOM_DATA[stageIndex].clues[i];
   pendingHintIndex=i;
-  hintConfirmLabel.textContent=`힌트 ${i+1} · ${c.symbol} · ${c.title}`;
+  const after=Math.max(0,remaining-120);
+  hintConfirmLabel.innerHTML=`힌트 ${i+1} · ${c.symbol} · ${c.title}<br><small>현재 ${formatTime(remaining)} → 사용 후 <b style="color:${after<=60?'#ff7789':'#ffe08b'}">${formatTime(after)}</b></small>`;
   hintConfirmDialog.showModal();
+  syncModalDanger();
 }
 function selectHint(i){
   if(isChainStage() && i>chainProgress){showChainToast('현재 연쇄 단서의 힌트만 볼 수 있습니다.');return}
@@ -1447,7 +1531,7 @@ function useHint(){
   hintResult.textContent=isChainStage()
     ?(chainProgress>=4?'연쇄 단서를 모두 해결했습니다. 출구 번호키를 확인하세요.':`현재는 힌트 ${chainProgress+1}만 새로 열 수 있습니다.`)
     :'1~4번 중 원하는 힌트를 선택하세요.';
-  hintDialog.showModal();
+  hintDialog.showModal();syncModalDanger();
 }
 function startGame(resume=false){
   if(gameActive)return;
