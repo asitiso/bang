@@ -273,6 +273,8 @@ button{cursor:pointer}
 
 .hint-modal{width:min(92vw,430px)}
 .hint-modal h2{margin:4px 0 6px}.hint-modal p{margin:0 0 15px;color:#aeb9c3;line-height:1.5;font-size:13px}
+.hint-warning{margin:10px 0 8px;padding:12px 13px;border-radius:12px;background:rgba(112,24,18,.72);border:1px solid rgba(255,112,75,.58);color:#ffd5c7;font-size:14px;font-weight:800;box-shadow:0 0 22px rgba(255,70,34,.12)}
+.hint-warning b{color:#fff4ba;font-size:15px}
 .hint-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .hint-choice{min-height:78px;border:1px solid #334150;border-radius:14px;background:#17202b;color:#fff;padding:12px;text-align:left;transition:.15s}
 .hint-choice:active{transform:scale(.98)}.hint-choice b{display:block;color:#ffd879;font-size:16px;margin-bottom:4px}.hint-choice small{display:block;color:#aeb8c2;line-height:1.35}
@@ -439,7 +441,8 @@ button{cursor:pointer}
     <button class="close-btn" data-close>×</button>
     <div class="eyebrow">HINT SELECT</div>
     <h2>힌트를 선택하세요</h2>
-    <p>처음 여는 힌트는 <b>2분 차감</b>됩니다. 이미 연 힌트는 무료로 다시 볼 수 있습니다.</p>
+    <div class="hint-warning">⚠ 힌트를 선택하면 <b>2분이 차감됩니다</b></div>
+    <p>이미 구매한 힌트는 추가 차감 없이 다시 볼 수 있습니다.</p>
     <div id="hintChoices" class="hint-grid"></div>
     <div id="hintResult" class="hint-result empty">1~4번 중 원하는 힌트를 선택하세요.</div>
   </dialog>
