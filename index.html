@@ -568,6 +568,8 @@ let bgmFilter = null;
 let bgmNodes = [];
 let bgmMotifTimer = null;
 let bgmNoiseBuffer = null;
+let audioUnlocked = false;
+let audioResumePromise = null;
 let tensionTimer = null;
 let lastTensionSecond = null;
 let hintIndex = 0;
@@ -576,25 +578,73 @@ let chainProgress = 0;
 let activeClueIndex = null;
 
 function createAudio(){
+  if(audioCtx && audioCtx.state==='closed'){
+    audioCtx=null;sfxBus=null;bgmBus=null;bgmFilter=null;bgmNoiseBuffer=null;bgmNodes=[];
+  }
   if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return null;
+    audioCtx=new AC({latencyHint:'interactive'});
+
     sfxBus=audioCtx.createGain();
-    sfxBus.gain.value=.82;
+    sfxBus.gain.value=.92;
     sfxBus.connect(audioCtx.destination);
 
     bgmBus=audioCtx.createGain();
-    bgmBus.gain.value=.018;
+    bgmBus.gain.value=.05;
     bgmFilter=audioCtx.createBiquadFilter();
     bgmFilter.type='lowpass';
-    bgmFilter.frequency.value=1450;
+    bgmFilter.frequency.value=1550;
     bgmFilter.Q.value=.35;
     bgmBus.connect(bgmFilter);
     bgmFilter.connect(audioCtx.destination);
   }
-  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+async function unlockAudio(){
+  const ctx=createAudio();
+  if(!ctx)return false;
+  if(audioResumePromise)return audioResumePromise;
+  audioResumePromise=(async()=>{
+    try{
+      if(ctx.state==='suspended')await ctx.resume();
+
+      // Safari/iOS/Chrome autoplay policy: push one almost-silent sample
+      // directly from the user's gesture so later WebAudio is trusted.
+      const b=ctx.createBuffer(1,1,ctx.sampleRate);
+      const src=ctx.createBufferSource();
+      const g=ctx.createGain();
+      g.gain.value=.00001;
+      src.buffer=b;src.connect(g);g.connect(ctx.destination);src.start(0);
+
+      audioUnlocked=ctx.state==='running';
+      if(audioUnlocked && gameActive && bgmNodes.length===0)startBgmForRoom();
+      return audioUnlocked;
+    }catch(e){
+      audioUnlocked=false;
+      return false;
+    }finally{
+      audioResumePromise=null;
+    }
+  })();
+  return audioResumePromise;
+}
+function resumeAudioOnGesture(){
+  unlockAudio();
+}
+function resumeAudioIfNeeded(){
+  if(!audioCtx||audioCtx.state==='closed')return;
+  if(audioCtx.state==='suspended'){
+    audioCtx.resume().then(()=>{
+      audioUnlocked=audioCtx.state==='running';
+      if(audioUnlocked&&gameActive&&bgmNodes.length===0)startBgmForRoom();
+    }).catch(()=>{});
+  }
 }
 function tone(freq=440,dur=.08,vol=.03,type='sine'){
-  if(!audioCtx) return;
+  if(!audioCtx)createAudio();
+  if(!audioCtx)return;
+  if(audioCtx.state==='suspended')resumeAudioIfNeeded();
   const o=audioCtx.createOscillator(), g=audioCtx.createGain();
   o.type=type;o.frequency.value=freq;g.gain.value=vol;
   o.connect(g);g.connect(sfxBus||audioCtx.destination);
@@ -605,7 +655,9 @@ function tone(freq=440,dur=.08,vol=.03,type='sine'){
   o.stop(t+dur+.02);
 }
 function dualTone(f1,f2,dur=.09,vol=.024){
+  if(!audioCtx)createAudio();
   if(!audioCtx)return;
+  if(audioCtx.state==='suspended')resumeAudioIfNeeded();
   const t=audioCtx.currentTime;
   [f1,f2].forEach((f,idx)=>{
     const o=audioCtx.createOscillator(),g=audioCtx.createGain();
@@ -653,6 +705,7 @@ function stopBgm(){
 }
 function startBgmForRoom(){
   if(!audioCtx||!bgmBus)return;
+  if(audioCtx.state==='suspended'){resumeAudioIfNeeded();return}
   stopBgm();
 
   const roots=[55,58.27,61.74,65.41,69.30,73.42,77.78,82.41,87.31,92.50,49,52,55,58.27,61.74];
@@ -710,7 +763,7 @@ function startBgmForRoom(){
 }
 function setBgmUrgency(){
   if(!audioCtx||!bgmBus)return;
-  const target=remaining<=10?.009:remaining<=30?.011:remaining<=60?.014:.018;
+  const target=remaining<=10?.022:remaining<=30?.028:remaining<=60?.036:.05;
   bgmBus.gain.setTargetAtTime(target,audioCtx.currentTime,.35);
 }
 function tensionPulse(){
@@ -1010,12 +1063,25 @@ function useHint(){
   if(hintIndex>=4){penalty(10,'힌트 모두 사용');return}
   const c=ROOM_DATA[stageIndex].clues[hintIndex];penalty(30);alert(`힌트 ${hintIndex+1} (${c.symbol})\n${c.hint}`);hintIndex++;
 }
-function startGame(){
-  createAudio();tone(520,.06,.025);startScreen.classList.add('hidden');gameScreen.classList.remove('hidden');gameActive=true;stageIndex=0;renderRoom();
+async function startGame(){
+  await unlockAudio();
+  tone(520,.06,.025);
+  startScreen.classList.add('hidden');gameScreen.classList.remove('hidden');
+  gameActive=true;stageIndex=0;renderRoom();
 }
 
 $('#startBtn').addEventListener('click',startGame);$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
+
+// Browser autoplay-policy recovery:
+// any real user gesture can re-awaken WebAudio, and returning to the tab resumes it.
+window.addEventListener('pointerdown',resumeAudioOnGesture,{capture:true,passive:true});
+window.addEventListener('touchstart',resumeAudioOnGesture,{capture:true,passive:true});
+window.addEventListener('keydown',resumeAudioOnGesture,{capture:true});
+window.addEventListener('focus',resumeAudioIfNeeded);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)resumeAudioIfNeeded()});
+window.addEventListener('pageshow',resumeAudioIfNeeded);
+
 buildKeypad();
 
 // Drag-to-pan: the room remains wider than the phone screen; it is never scaled down.
