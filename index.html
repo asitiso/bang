@@ -257,6 +257,39 @@ button{cursor:pointer}
 .chain-stage-13{--chainGlow:#a9ff78}
 .chain-stage-14{--chainGlow:#b7d9ff}
 .chain-stage-15{--chainGlow:#62e9ff}
+.chain-stage-16{--chainGlow:#77c9ff;background:radial-gradient(circle at 46% 18%,rgba(71,173,255,.16),transparent 28%),linear-gradient(90deg,#09131c,#172a36 48%,#071018)}
+.chain-stage-17{--chainGlow:#9ce8ff;background:radial-gradient(circle at 70% 16%,rgba(152,230,255,.2),transparent 24%),linear-gradient(90deg,#09171a,#173239,#071215)}
+.chain-stage-18{--chainGlow:#8affd2;background:radial-gradient(circle at 42% 18%,rgba(107,255,200,.14),transparent 28%),linear-gradient(90deg,#071512,#18322a,#08120f)}
+.chain-stage-19{--chainGlow:#ffd37a;background:radial-gradient(circle at 56% 18%,rgba(255,203,95,.15),transparent 27%),linear-gradient(90deg,#17130b,#332b18,#100d08)}
+.chain-stage-20{--chainGlow:#ff657f;background:radial-gradient(circle at 52% 20%,rgba(255,55,91,.18),transparent 30%),linear-gradient(90deg,#130810,#32121e,#0a0609)}
+.pharmacy-room-fx{position:absolute;z-index:3;inset:0;pointer-events:none;overflow:hidden}
+.pharm-rx{position:absolute;left:90px;top:255px;font:900 92px Georgia,serif;color:rgba(133,225,255,.12);text-shadow:0 0 30px rgba(100,220,255,.1)}
+.pharm-zone{position:absolute;left:88px;top:365px;padding:7px 11px;border:1px solid rgba(138,235,255,.18);border-radius:7px;background:rgba(3,14,20,.42);color:rgba(173,240,255,.5);font:900 11px ui-monospace,monospace;letter-spacing:.18em}
+.pharm-shelf{position:absolute;bottom:105px;width:210px;height:310px;border:9px solid rgba(185,216,220,.16);background:repeating-linear-gradient(to bottom,rgba(198,229,232,.06) 0 60px,rgba(190,225,230,.15) 61px 65px)}
+.pharm-shelf.ps1{left:820px}.pharm-shelf.ps2{left:1090px;height:260px}
+.pharm-screen{position:absolute;right:410px;top:205px;width:190px;height:115px;border:7px solid rgba(26,47,54,.72);border-radius:8px;background:repeating-linear-gradient(to bottom,rgba(75,248,194,.08) 0 2px,transparent 2px 7px),#06110f;box-shadow:0 0 28px rgba(65,247,187,.08)}
+.pharm-cross{position:absolute;right:168px;top:210px;font:900 74px/1 system-ui;color:rgba(102,255,193,.13);text-shadow:0 0 26px rgba(60,255,183,.12)}
+.chain-stage-17 .pharm-screen{background:linear-gradient(#d8fbff22,#b9f2ff08),#061319;box-shadow:0 0 32px rgba(124,229,255,.16)}
+.chain-stage-19 .pharm-rx,.chain-stage-19 .pharm-zone{color:rgba(255,218,138,.48)}
+.chain-stage-20 .pharm-rx{color:rgba(255,104,130,.14);text-shadow:0 0 35px rgba(255,54,86,.16)}
+.chain-stage-20 .pharm-screen{background:repeating-linear-gradient(to bottom,rgba(255,77,101,.08) 0 2px,transparent 2px 7px),#16060b;box-shadow:0 0 35px rgba(255,52,82,.16)}
+
+.device-cover.dispense,.device-cover.cold,.device-cover.rxarchive,.device-cover.stockvault,.device-cover.pharmvault{background:linear-gradient(145deg,#17252c,#080d10);border:3px solid #314851}
+.device-cover.dispense::before,.device-cover.cold::before,.device-cover.rxarchive::before,.device-cover.stockvault::before,.device-cover.pharmvault::before{width:175px;height:118px;border-radius:12px;background:repeating-linear-gradient(90deg,#263840 0 18px,#10191d 19px 34px);box-shadow:inset 0 0 0 5px #0b1215,0 0 25px rgba(115,225,255,.1)}
+.device-cover.dispense::after,.device-cover.cold::after,.device-cover.rxarchive::after,.device-cover.stockvault::after,.device-cover.pharmvault::after{width:72px;height:36px;border-radius:8px;background:#092029;border:2px solid #3e6b78;box-shadow:0 0 18px rgba(98,225,255,.15)}
+.device-cover.cold{background:linear-gradient(145deg,#18333a,#071316);border-color:#3f6a72}
+.device-cover.cold::before{background:repeating-linear-gradient(0deg,#d9fbff22 0 14px,#0b252b 15px 31px)}
+.device-cover.rxarchive{background:linear-gradient(145deg,#132920,#07120e);border-color:#315d4c}
+.device-cover.rxarchive::before{background:repeating-linear-gradient(90deg,#234737 0 28px,#0c1e17 29px 48px)}
+.device-cover.stockvault{background:linear-gradient(145deg,#332812,#120e06);border-color:#68542b}
+.device-cover.stockvault::before{background:repeating-linear-gradient(90deg,#5b4824 0 22px,#1d170b 23px 39px)}
+.device-cover.pharmvault{background:radial-gradient(circle,#35101a,#090507 67%);border-color:#793144}
+.device-cover.pharmvault::before{border-radius:50%;width:165px;height:165px;background:repeating-conic-gradient(#602238 0 13deg,#160910 14deg 27deg);box-shadow:inset 0 0 0 31px #0b0508,inset 0 0 0 35px #7b3047,0 0 35px rgba(255,70,105,.16)}
+.chain-current .device-cover.dispense::before,.chain-current .device-cover.cold::before,.chain-current .device-cover.rxarchive::before,.chain-current .device-cover.stockvault::before{transform:translateY(-95%) scale(.9);opacity:0}
+.chain-current .device-cover.dispense::after,.chain-current .device-cover.cold::after,.chain-current .device-cover.rxarchive::after,.chain-current .device-cover.stockvault::after{transform:scale(.2);opacity:0}
+.chain-current .device-cover.pharmvault::before{transform:rotate(170deg) scale(1.28);opacity:0}
+.chain-current .device-cover.pharmvault::after{transform:scale(.15);opacity:0}
+
 .chain-stage-12 .room-title{text-shadow:0 0 18px rgba(255,58,84,.25),0 7px 25px rgba(0,0,0,.5)}
 .chain-stage-13 .chain-room-fx{filter:hue-rotate(30deg)}
 .chain-stage-14 .chain-room-fx{opacity:.88}
@@ -399,11 +432,11 @@ button{cursor:pointer}
       <div class="start-card">
         <div class="eyebrow">K-ESCAPE / MOBILE</div>
         <h1>시간의 방</h1>
-        <p>15개의 방. 폭발 카운트다운이 끝나기 전에 네 개의 단서를 풀고 4자리 코드를 입력해 탈출하세요.</p>
+        <p>20개의 방. 폭발 카운트다운이 끝나기 전에 네 개의 단서를 풀고 4자리 코드를 입력해 탈출하세요.</p>
         <div class="start-rules">
           <span>↔ 화면을 좌우로 끌어 탐색</span>
           <span>◈ 단서 4개를 조합</span>
-          <span>⛓ 11~15번 방은 연쇄형 단서</span>
+          <span>⛓ 11~20번 방은 연쇄형 단서 · 16~20은 약국 고난도 구역</span>
           <span>⌛ 마지막 60초 긴장음</span>
         </div>
         <div id="resumeInfo" class="resume-info hidden"></div>
@@ -649,11 +682,66 @@ const ROOM_DATA = [
       {symbol:'GRID', title:'최종 격자', kind:'', art:'<div class="symbol-grid"><span>6</span><span>4</span><span>8</span><span>2</span><span>7</span><span>5</span><span>9</span><span>3</span><span>1</span></div><div class="tiny">DIAL번째 칸</div>', note:'왼쪽 위부터 1~9로 번호를 붙이고 DIAL번째 칸의 값을 읽는다. 그 값이 세 번째 숫자다.', hint:'DIAL=9. 아홉 번째 칸은 1.'},
       {symbol:'CORE', title:'코어 연산표', kind:'redpaper', art:'<div class="tiny">GRID=1 → △ : |DIAL−SEED|+2<br>GRID=2 → ○ : SEED+GRID<br>GRID=3 → □ : DIAL−GRID</div><div class="big">?</div>', note:'GRID 값이 고르는 규칙을 사용한다. 선택된 식에 SEED와 DIAL을 넣어 네 번째 숫자를 만든다.', hint:'GRID=1이므로 △ 규칙. |9−5|+2=6.'}
     ]
+  },
+  {
+    name:'야간 조제실', minutes:16, answer:'6832', theme:6,
+    intro:'약국 폐점 후 자동 조제 시스템이 잠겼다. 가상 조제코드의 연립조건 → 트레이 위치 → 문자 치환 → 검증식이 한 줄로 이어진다.',
+    order:'MIX → TRAY → LABEL → CHECK',
+    clues:[
+      {symbol:'MIX', title:'세 병의 가상 조제코드', kind:'blueprint', art:'<div class="mid">P + Q = 10<br>Q + R = 9<br>P + R = 7<br><br><b>Q = ?</b></div>', note:'세 식을 동시에 만족하는 P,Q,R을 구한다. Q가 첫 번째 숫자이며 다음 트레이 번호가 된다.', hint:'세 식을 모두 더하면 2(P+Q+R)=26. Q는 6.'},
+      {symbol:'TRAY', title:'자동 조제 트레이', kind:'dark', art:'<div class="big">4　1　7　9　3　8　2　5</div><div class="tiny">MIX번째 트레이를 읽어라</div>', note:'왼쪽부터 MIX번째 값을 읽는다. 그 값이 두 번째 숫자이자 LABEL의 이동량이다.', hint:'MIX=6. 여섯 번째 트레이 값은 8.'},
+      {symbol:'LABEL', title:'라벨 프린터 암호', kind:'', art:'<div class="mid">K<br>← TRAY칸<br>A=1 · B=2 · … · Z=26</div>', note:'K에서 알파벳을 TRAY칸 뒤로 이동한 뒤, 도착 문자의 A1Z26 값을 한 자리 숫자로 사용한다.', hint:'K에서 8칸 뒤로 가면 C, C=3.'},
+      {symbol:'CHECK', title:'조제 검증식', kind:'redpaper', art:'<div class="mid">( MIX + TRAY + LABEL ) mod 5</div>', note:'앞의 세 숫자를 모두 더하고 5로 나눈 나머지가 마지막 숫자다.', hint:'6+8+3=17, 17 mod 5 = 2.'}
+    ]
+  },
+  {
+    name:'냉장 의약품 보관실', minutes:17, answer:'7294', theme:2,
+    intro:'냉장고 비상전원이 흔들린다. 온도 로그의 규칙을 복원하고, 그 결과로 선반·회전판·검증식을 차례로 해제한다. 모든 품목명과 코드는 퍼즐용 가상 데이터다.',
+    order:'LOG → SHELF → DIAL → VERIFY',
+    clues:[
+      {symbol:'LOG', title:'온도 로그 차분', kind:'dark', art:'<div class="big">2 · 3 · 5 · 8 · 12 · ?</div><div class="tiny">다음 값의 일의 자리</div>', note:'연속된 값의 차이를 다시 살펴본다. 다음 값의 일의 자리가 첫 숫자다.', hint:'차이는 +1,+2,+3,+4… 다음은 +5. 12+5=17 → 7.'},
+      {symbol:'SHELF', title:'냉장 선반 인덱스', kind:'blueprint', art:'<div class="big">9　4　6　1　8　3　2　5　7</div><div class="tiny">LOG번째 칸</div>', note:'LOG 결과를 위치 번호로 사용한다. 해당 값이 두 번째 숫자다.', hint:'LOG=7. 일곱 번째 값은 2.'},
+      {symbol:'DIAL', title:'비상 회전판', kind:'', art:'<div class="mid">7 → 4 → 9 → 1<br>↑　　　　　　↓<br>2 ← 6 ← 8 ← 3</div><div class="tiny">7에서 시작, SHELF칸 시계방향 이동</div>', note:'고리 [7,4,9,1,3,8,6,2]를 따라 SHELF칸 이동한다. 도착값이 세 번째 숫자다.', hint:'SHELF=2. 7에서 두 칸 이동하면 9.'},
+      {symbol:'VERIFY', title:'냉장 검증식', kind:'redpaper', art:'<div class="mid">(|LOG − SHELF| + DIAL) mod 10</div>', note:'앞 세 값을 검증식에 넣는다. 결과의 일의 자리가 마지막 숫자다.', hint:'|7−2|+9=14 → 4.'}
+    ]
+  },
+  {
+    name:'처방 기록 아카이브', minutes:18, answer:'3825', theme:8,
+    intro:'네 개의 가상 처방파일 위치를 논리로 확정한 뒤 문자 이동, 나선 인덱스, 모듈러 검산으로 이어진다. 실제 처방 내용이나 복약정보는 사용하지 않는다.',
+    order:'FILE → SHIFT → SPIRAL → AUDIT',
+    clues:[
+      {symbol:'FILE', title:'파일 슬롯 논리', kind:'blueprint', art:'<div class="tiny">P,Q,R,S는 슬롯 1~4를 하나씩 사용<br><br>① R은 P의 바로 왼쪽<br>② Q는 P의 바로 오른쪽<br>③ S는 1번 슬롯이 아님<br><br><b>Q의 슬롯 = ?</b></div>', note:'세 조건을 동시에 만족하는 유일한 배열을 찾는다. Q의 슬롯 번호가 첫 숫자다.', hint:'R-P-Q가 연속해야 한다. 2-3-4로 놓으면 S가 1이 되어 조건③ 위반. 따라서 R-P-Q=1-2-3, Q=3.'},
+      {symbol:'SHIFT', title:'기록 문자 이동', kind:'dark', art:'<div class="mid">K ← FILE칸<br>A=1 · B=2 · …</div>', note:'K를 FILE칸 뒤로 이동하고 도착 문자를 숫자로 바꾼다.', hint:'FILE=3. K→J→I→H, H=8.'},
+      {symbol:'SPIRAL', title:'처방함 나선 인덱스', kind:'', art:'<div class="symbol-grid"><span>4</span><span>7</span><span>1</span><span>2</span><span>9</span><span>6</span><span>8</span><span>5</span><span>3</span></div><div class="tiny">왼쪽 위부터 시계방향 나선 · SHIFT번째</div>', note:'3×3 격자를 바깥에서 안쪽으로 시계방향 나선 순서로 읽고 SHIFT번째 값을 고른다.', hint:'나선 순서 4,7,1,6,3,5,8,2,9. SHIFT=8이므로 2.'},
+      {symbol:'AUDIT', title:'감사 로그 검산', kind:'redpaper', art:'<div class="mid">( FILE × SPIRAL + SHIFT ) mod 9</div>', note:'앞 세 결과를 식에 대입한다. 나머지가 마지막 숫자다.', hint:'3×2+8=14, 14 mod 9 = 5.'}
+    ]
+  },
+  {
+    name:'재고·유통기한 금고', minutes:19, answer:'8641', theme:5,
+    intro:'FEFO 원칙을 모티프로 한 가상 재고 퍼즐이다. 격리 품목을 제외하고 가장 먼저 처리할 배치를 찾은 뒤, 바코드 인덱스와 검산을 거쳐 금고 위치를 찾는다.',
+    order:'FEFO → BARCODE → SUM → BIN',
+    clues:[
+      {symbol:'FEFO', title:'가상 배치 우선순위', kind:'', art:'<div class="tiny">기준일 2026-08<br><br>B1 · 2027-02 · 코드 3<br>B2 · 2026-11 · 코드 8<br>B3 · 2026-09 · 코드 5 · QUARANTINE<br>B4 · 2027-01 · 코드 6<br><br>격리 제외 · 가장 빠른 정상 배치</div>', note:'격리 표시가 있는 배치는 제외한다. 남은 배치 중 날짜가 가장 이른 것의 코드가 첫 숫자다.', hint:'B3는 격리라 제외. 정상 배치 중 2026-11 B2가 가장 빠르므로 코드 8.'},
+      {symbol:'BARCODE', title:'재고 바코드 인덱스', kind:'dark', art:'<div class="big">3 9 1 7 5 4 2 6 8</div><div class="tiny">FEFO번째 숫자</div>', note:'FEFO 값을 위치 번호로 사용한다. 선택된 숫자가 두 번째 숫자다.', hint:'FEFO=8. 여덟 번째 숫자는 6.'},
+      {symbol:'SUM', title:'재고 체크섬', kind:'blueprint', art:'<div class="mid">( FEFO + BARCODE ) mod 5</div>', note:'두 값을 더한 뒤 5로 나눈 나머지가 세 번째 숫자다.', hint:'8+6=14, 14 mod 5 = 4.'},
+      {symbol:'BIN', title:'금고 보관함', kind:'redpaper', art:'<div class="big">7　3　9　1</div><div class="tiny">SUM번째 보관함</div>', note:'SUM을 위치 번호로 사용한다. 그 위치의 값이 마지막 숫자다.', hint:'SUM=4. 네 번째 값은 1.'}
+    ]
+  },
+  {
+    name:'중앙 약국 보안금고', minutes:20, answer:'9157', theme:10,
+    intro:'최종 약국 구역. 행렬식 → 회전 인덱스 → 논리 비트 → 종합 검증식으로 이어지는 최고 난도 연쇄 퍼즐이다. 앞 단계를 이해하지 못하면 뒤 장치를 해제할 수 없다.',
+    order:'MATRIX → RING → LOGIC → VAULT',
+    clues:[
+      {symbol:'MATRIX', title:'보안 행렬', kind:'blueprint', art:'<div class="mid">┌ 4　1 ┐<br>└ 3　3 ┘<br><br>det = ad − bc</div>', note:'2×2 행렬의 행렬식을 계산한다. 결과가 첫 번째 숫자이자 RING 인덱스다.', hint:'4×3 − 1×3 = 12−3 = 9.'},
+      {symbol:'RING', title:'약국 보안 링', kind:'dark', art:'<div class="big">4　7　3　8　2　6　5　9　1</div><div class="tiny">MATRIX번째 위치</div>', note:'왼쪽부터 MATRIX번째 값을 읽는다. 그 값이 두 번째 숫자이며 LOGIC의 연산 분기를 결정한다.', hint:'MATRIX=9. 아홉 번째 값은 1.'},
+      {symbol:'LOGIC', title:'논리 잠금 비트', kind:'', art:'<div class="tiny">RING이 홀수면 XOR / 짝수면 AND<br><br>1 ? 1<br>1 ? 0<br>1 ? 1<br>0 ? 1<br><br>결과 4비트를 2진수로 읽기</div>', note:'RING의 홀짝에 따라 ? 연산을 선택한다. 위에서 아래로 나온 네 비트를 8·4·2·1 자리의 2진수로 읽는다.', hint:'RING=1은 홀수 → XOR. 결과는 0,1,0,1 = 이진수 0101 = 5.'},
+      {symbol:'VAULT', title:'최종 금고 검증식', kind:'redpaper', art:'<div class="mid">( MATRIX + LOGIC ) ÷ ( RING + 1 )</div>', note:'앞의 세 값을 마지막 식에 넣는다. 정확히 나누어떨어지는 값이 최종 숫자다.', hint:'(9+5)÷(1+1)=14÷2=7.'}
+    ]
   }
 ];
 
 // Tighter pacing: start at 5 minutes and increase gradually.
-const ROOM_MINUTES=[5,6,6,7,7,8,8,9,9,10,11,12,13,14,15];
+const ROOM_MINUTES=[5,6,6,7,7,8,8,9,9,10,11,12,13,14,15,16,17,18,19,20];
 ROOM_DATA.forEach((room,i)=>room.minutes=ROOM_MINUTES[i]);
 
 // Stage 9 clue I intentionally resolves to 2 via the room's printed calibration rule.
@@ -1173,7 +1261,8 @@ function triggerStandardClearFx(){
 function isChainStage(){return stageIndex>=10}
 function chainStageNumber(){return stageIndex+1}
 function chainCoverType(){
-  return ['cabinet','film','engine','mirror','core'][Math.max(0,Math.min(4,stageIndex-10))] || 'cabinet';
+  const types=['cabinet','film','engine','mirror','core','dispense','cold','rxarchive','stockvault','pharmvault'];
+  return types[Math.max(0,Math.min(types.length-1,stageIndex-10))] || 'cabinet';
 }
 function chainCoverLabel(i){
   const labels={
@@ -1181,9 +1270,26 @@ function chainCoverLabel(i){
     11:['FILM READY','DARKROOM SEALED','DEVELOPER LOCKED','ENLARGER SEALED'],
     12:['POWER ONLINE','TURBINE LOCKED','CONTROL LOCKED','RAIL LOCKED'],
     13:['MIRROR I','MIRROR II SEALED','MIRROR III SEALED','MIRROR IV SEALED'],
-    14:['SEED ONLINE','DIAL OFFLINE','GRID OFFLINE','CORE SEALED']
+    14:['SEED ONLINE','DIAL OFFLINE','GRID OFFLINE','CORE SEALED'],
+    15:['MIX STATION','TRAY LOCKED','LABEL LOCKED','CHECK SEALED'],
+    16:['TEMP LOG','SHELF LOCKED','DIAL FROZEN','VERIFY SEALED'],
+    17:['FILE INDEX','SHIFT LOCKED','SPIRAL LOCKED','AUDIT SEALED'],
+    18:['FEFO SCAN','BARCODE LOCKED','CHECKSUM LOCKED','BIN SEALED'],
+    19:['MATRIX CORE','RING LOCKED','LOGIC LOCKED','VAULT SEALED']
   };
   return (labels[stageIndex]||labels[10])[i];
+}
+function pharmacyRoomLabel(){
+  return ['NIGHT DISPENSING','COLD STORAGE','RX ARCHIVE','INVENTORY VAULT','CENTRAL PHARMACY VAULT'][Math.max(0,stageIndex-15)]||'PHARMACY';
+}
+function pharmacyFxMarkup(){
+  if(stageIndex<15)return '';
+  return `<div class="pharmacy-room-fx">
+    <div class="pharm-rx">℞</div>
+    <div class="pharm-zone">${pharmacyRoomLabel()}</div>
+    <i class="pharm-shelf ps1"></i><i class="pharm-shelf ps2"></i>
+    <i class="pharm-screen"></i><i class="pharm-cross">+</i>
+  </div>`;
 }
 function chainFxMarkup(){
   if(!isChainStage())return '';
@@ -1191,7 +1297,7 @@ function chainFxMarkup(){
     <div class="chain-conduit"></div>
     <i class="chain-node n1"></i><i class="chain-node n2"></i><i class="chain-node n3"></i><i class="chain-node n4"></i>
     <i class="chain-ceiling-light l1"></i><i class="chain-ceiling-light l2"></i>
-    <div class="chain-status-panel"><b>SEQUENCE</b><i></i><i></i><i></i><i></i></div>
+    <div class="chain-status-panel"><b>${stageIndex>=15?'PHARMACY LOCK':'SEQUENCE'}</b><i></i><i></i><i></i><i></i></div>
   </div>`;
 }
 function showChainToast(text){
@@ -1275,6 +1381,7 @@ function renderRoom(){
     ${isChainStage()?'<div class="chain-banner">⛓ 앞 단서를 풀면 방 안의 다음 장치가 실제로 열립니다 <b id="chainStatus">0/4</b></div>':''}
     ${standardFxMarkup()}
     ${chainFxMarkup()}
+    ${pharmacyFxMarkup()}
     <div class="prop lamp"></div><div class="prop desk"></div><div class="prop shelf"></div><div class="prop window"></div>
     ${d.clues.map((c,i)=>{const p=cluePosition(i);const chainClass=isChainStage()?(i===0?' chain-current':' chain-locked'):'';const hiddenClass=standardNeedsDiscovery(i)&&!discoveredClues.has(i)?' standard-undiscovered':'';const findLabel=hiddenClass?` data-find-label="${standardDiscoveryLabel(i)}"`:'';const device=isChainStage()?`<span class="device-frame"><span class="device-cover ${chainCoverType()}"><strong>${chainCoverLabel(i)}</strong></span></span>`:'';return `<button class="clue${chainClass}${hiddenClass}" data-clue="${i}"${findLabel} style="left:${p.l}px;top:${p.t}px;--r:${p.r}" ${isChainStage()&&i>0?'disabled':''}>${device}<div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
     <button class="exit-zone ${isChainStage()?'chain-locked':''}" id="exitDoor" aria-label="4자리 번호키 출구문">
@@ -1452,7 +1559,7 @@ function roomFailed(){
 }
 function finishGame(){
   clearInterval(timerId);gameActive=false;stopBgm();
-  resultContent.innerHTML=`<div class="eyebrow">ESCAPE COMPLETE</div><h2>15개의 방을 모두 탈출했습니다</h2><p>관찰, 암호, 수학, 방향, 논리를 모두 통과했습니다.</p><button id="restartBtn" class="primary-btn">처음부터 다시</button>`;
+  resultContent.innerHTML=`<div class="eyebrow">ESCAPE COMPLETE</div><h2>20개의 방을 모두 탈출했습니다</h2><p>관찰, 암호, 수학, 방향, 논리를 모두 통과했습니다.</p><button id="restartBtn" class="primary-btn">처음부터 다시</button>`;
   resultDialog.showModal();$('#restartBtn').onclick=()=>location.reload();
 }
 function renderHintChoices(){
