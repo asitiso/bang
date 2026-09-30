@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>시간의 방 — 모바일 방탈출</title>
+  <style>
+:root{
+  --bg:#080b10;--panel:#111822;--ink:#f2f4f7;--muted:#9aa6b2;--accent:#ffcb66;
+  --danger:#ff435c;--cyan:#6ee7ff;--safe:#7ef29a;--shadow:0 22px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}
+button,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.screen{width:100%;height:100%;position:relative}
+.start-screen{display:grid;place-items:center;padding:24px;background:
+  radial-gradient(circle at 20% 20%,rgba(99,163,255,.18),transparent 35%),
+  radial-gradient(circle at 80% 75%,rgba(255,162,65,.16),transparent 38%),
+  linear-gradient(135deg,#0d1118,#05070a 65%)}
+.start-card{width:min(92vw,460px);padding:30px;border:1px solid rgba(255,255,255,.12);border-radius:26px;background:rgba(12,17,24,.82);box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+.eyebrow{letter-spacing:.28em;font-size:11px;color:var(--cyan);font-weight:800}.start-card h1{font-size:42px;margin:10px 0 12px}.start-card p{line-height:1.65;color:#c7d0d8}.start-rules{display:grid;gap:9px;margin:20px 0;color:#d5dde4;font-size:14px}.primary-btn{width:100%;border:0;border-radius:15px;padding:16px 18px;background:linear-gradient(135deg,#ffd879,#ff9e3d);color:#17100a;font-weight:900;font-size:18px;box-shadow:0 10px 35px rgba(255,173,61,.25)}.start-card small{display:block;margin-top:12px;color:#77838e;line-height:1.45}
+
+.game-screen{background:#070a0e}.hud{position:fixed;z-index:50;top:0;left:0;right:0;height:78px;padding:calc(10px + env(safe-area-inset-top)) 12px 8px;display:grid;grid-template-columns:minmax(0,1fr) auto 44px;gap:10px;align-items:center;background:linear-gradient(to bottom,rgba(5,8,12,.96),rgba(5,8,12,.75),transparent)}
+.stage-pill{min-width:0}.stage-pill span{display:block;font-size:10px;color:var(--cyan);letter-spacing:.16em}.stage-pill b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;margin-top:2px}.timer{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:900;font-size:27px;letter-spacing:.04em;padding:7px 10px;border-radius:11px;color:#fff;background:#121923;border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 0 18px rgba(110,231,255,.05)}.timer.warning{color:#ffe47b;box-shadow:0 0 20px rgba(255,211,97,.22)}.timer.danger{color:#ff5c70;animation:pulse .6s infinite alternate;box-shadow:0 0 24px rgba(255,67,92,.28)}
+.icon-btn{width:42px;height:42px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#141b24;color:#fff;font-size:20px}.progress{position:fixed;z-index:52;top:calc(70px + env(safe-area-inset-top));left:12px;right:12px;height:3px;display:flex;gap:4px}.progress i{display:block;flex:1;height:100%;border-radius:99px;background:rgba(255,255,255,.14)}.progress i.done{background:var(--safe)}.progress i.current{background:var(--accent)}
+.viewport{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;scrollbar-width:none;overscroll-behavior-x:contain;cursor:grab}.viewport::-webkit-scrollbar{display:none}.viewport.dragging{cursor:grabbing}.room{height:100%;width:1900px;min-width:1900px;position:relative;overflow:hidden;background:#18202b;transition:filter .25s}
+.room::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.02),rgba(0,0,0,.14) 62%,rgba(0,0,0,.55));pointer-events:none;z-index:2}
+.room::after{content:"";position:absolute;left:0;right:0;bottom:0;height:24%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 2px,transparent 2px 120px),linear-gradient(#1a1d21,#090b0d);clip-path:polygon(0 38%,100% 0,100% 100%,0 100%);z-index:1}
+
+.room-theme-1{background:radial-gradient(circle at 20% 25%,rgba(245,190,105,.18),transparent 25%),linear-gradient(90deg,#17202a,#263341 48%,#12171e)}
+.room-theme-2{background:radial-gradient(circle at 50% 18%,rgba(121,206,255,.12),transparent 30%),linear-gradient(90deg,#131d22,#22323c,#0d1418)}
+.room-theme-3{background:radial-gradient(circle at 70% 20%,rgba(255,95,95,.11),transparent 26%),linear-gradient(90deg,#1a1520,#312339,#15111a)}
+.room-theme-4{background:radial-gradient(circle at 42% 18%,rgba(145,255,201,.10),transparent 29%),linear-gradient(90deg,#111c1a,#20322f,#0e1515)}
+.room-theme-5{background:radial-gradient(circle at 30% 16%,rgba(255,213,111,.10),transparent 28%),linear-gradient(90deg,#171711,#2e2b1c,#12120e)}
+.room-theme-6{background:radial-gradient(circle at 70% 18%,rgba(93,146,255,.13),transparent 25%),linear-gradient(90deg,#0d1320,#1e2b46,#090e17)}
+.room-theme-7{background:radial-gradient(circle at 45% 22%,rgba(224,133,255,.12),transparent 28%),linear-gradient(90deg,#18101d,#30203a,#110b16)}
+.room-theme-8{background:radial-gradient(circle at 30% 18%,rgba(84,255,227,.10),transparent 28%),linear-gradient(90deg,#0d1a1a,#15322f,#091210)}
+.room-theme-9{background:radial-gradient(circle at 75% 15%,rgba(255,130,79,.10),transparent 30%),linear-gradient(90deg,#1b1310,#3a261e,#130d0b)}
+.room-theme-10{background:radial-gradient(circle at 50% 25%,rgba(255,58,91,.11),transparent 30%),linear-gradient(90deg,#100d14,#2b1a2b,#0b0910)}
+
+.wall-label{position:absolute;z-index:4;top:120px;left:42px;font-size:12px;letter-spacing:.25em;color:rgba(255,255,255,.45)}.room-title{position:absolute;z-index:4;top:142px;left:42px;font-size:36px;font-weight:900;text-shadow:0 7px 25px rgba(0,0,0,.5)}
+.clue{position:absolute;z-index:5;width:230px;min-height:220px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:linear-gradient(160deg,rgba(236,230,213,.95),rgba(181,171,150,.94));color:#171717;box-shadow:0 20px 55px rgba(0,0,0,.4);padding:14px;transform:rotate(var(--r,0deg));transition:transform .18s,box-shadow .18s}.clue:active{transform:scale(.98) rotate(var(--r,0deg))}.clue .tag{font-size:10px;letter-spacing:.15em;font-weight:900;color:#6e6558}.clue h3{font-size:14px;margin:5px 0 10px}.clue-art{height:145px;border-radius:8px;background:#e8e2d3;display:grid;place-items:center;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}.clue-art.dark{background:#171a1e;color:#f8f1df}.clue-art.blueprint{background-color:#15314a;color:#e7f5ff;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:18px 18px}.clue-art.redpaper{background:#5d1820;color:#ffe8cf}.clue-art .big{font:800 34px/1 ui-monospace,monospace;letter-spacing:.08em}.clue-art .mid{font:800 22px/1.35 ui-monospace,monospace}.clue-art .tiny{font:700 14px/1.5 ui-monospace,monospace}.dot-grid{display:grid;grid-template-columns:repeat(3,20px);gap:12px}.dot-grid b{width:20px;height:20px;border-radius:50%;border:2px solid currentColor}.dot-grid b.on{background:currentColor}.shape-row{display:flex;align-items:center;gap:14px;font-size:36px}.binary{display:grid;grid-template-columns:repeat(4,28px);gap:9px}.binary i{display:block;width:28px;height:28px;border-radius:50%;background:#26303a;border:2px solid #74818c}.binary i.on{background:#7affb0;box-shadow:0 0 12px #62ff9e}.symbol-grid{display:grid;grid-template-columns:repeat(3,40px);gap:10px;font-size:28px;text-align:center}.paper-lines{width:80%;height:70%;background:repeating-linear-gradient(to bottom,transparent 0 16px,rgba(0,0,0,.18) 17px 18px);position:relative}.paper-lines::before{content:"◇ ○ △ □";position:absolute;left:10px;top:13px;font-weight:900;letter-spacing:.28em}.paper-lines::after{content:"△ □ ○ ◇";position:absolute;left:10px;top:48px;font-weight:900;letter-spacing:.28em}
+
+.prop{position:absolute;z-index:3;filter:drop-shadow(0 20px 20px rgba(0,0,0,.35))}.desk{left:320px;bottom:115px;width:460px;height:170px;border-radius:5px 5px 0 0;background:linear-gradient(#6b4b30,#3a281d);box-shadow:0 18px 0 #251a13}.shelf{left:870px;bottom:115px;width:360px;height:500px;border:20px solid #3a2a21;background:repeating-linear-gradient(to bottom,#271c16 0 98px,#4b3629 99px 112px)}.lamp{left:620px;top:180px;width:110px;height:110px;border-radius:55px 55px 20px 20px;background:radial-gradient(circle,#ffe7a9,#c77f2e 64%,#593517);box-shadow:0 0 70px rgba(255,196,93,.34)}.window{left:1260px;top:150px;width:300px;height:360px;border:17px solid #281f1b;background:linear-gradient(#08192d,#153656 55%,#533b4e);box-shadow:inset 0 0 0 7px #15110f}.window::before{content:"";position:absolute;width:80px;height:80px;border-radius:50%;background:#eee0b5;right:30px;top:34px;box-shadow:0 0 25px #eee0b5}.window::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:10px;background:#211917;box-shadow:-140px 175px 0 -3px #211917}
+
+.exit-zone{position:absolute;z-index:6;right:72px;top:120px;width:280px;height:560px}.door{position:absolute;inset:0;background:linear-gradient(90deg,#3a2c25,#5d4638 42%,#2f241f);border:9px solid #201916;box-shadow:0 20px 55px rgba(0,0,0,.55),inset 0 0 0 4px rgba(255,255,255,.035)}.door::before{content:"EXIT";position:absolute;top:36px;left:0;right:0;text-align:center;letter-spacing:.4em;font-size:11px;color:#c8bda7}.door::after{content:"";position:absolute;right:26px;top:280px;width:35px;height:8px;border-radius:6px;background:#c2ad86;box-shadow:0 0 0 5px #24211e}.keypad-preview{position:absolute;left:56px;top:190px;width:126px;padding:12px 10px;border-radius:10px;background:#14181d;border:3px solid #32383e;box-shadow:0 8px 20px rgba(0,0,0,.45)}.keypad-preview .slots{height:26px;border-radius:4px;background:#050707;color:#7bffaf;display:grid;place-items:center;font:900 17px monospace;letter-spacing:.18em;margin-bottom:8px}.keypad-preview .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.keypad-preview .keys i{height:22px;border-radius:3px;background:#343b43;border:1px solid #4c555f}.door-cta{position:absolute;left:33px;right:33px;bottom:34px;padding:11px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;text-align:center;font-weight:800;font-size:13px}
+
+.bottom-hud{position:fixed;z-index:50;left:0;right:0;bottom:0;padding:8px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;background:linear-gradient(to top,rgba(4,7,10,.97),rgba(4,7,10,.65),transparent)}.swipe-tip{flex:1;min-width:0;font-size:11px;color:#d2d8de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint-btn{flex:none;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:#151d27;color:white;padding:10px 12px;font-weight:800}.hint-btn span{font-size:10px;color:#ffbd75;margin-left:4px}
+
+.modal{width:min(92vw,480px);border:1px solid rgba(255,255,255,.13);border-radius:22px;background:#111821;color:white;box-shadow:var(--shadow);padding:22px}.modal::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}.close-btn{position:absolute;right:10px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:#222c37;color:#fff;font-size:22px}.detail-card{padding-top:18px}.detail-card h2{margin:0 0 8px}.detail-art{min-height:210px;border-radius:16px;margin:18px 0;display:grid;place-items:center;background:#e9e3d6;color:#141414;padding:16px}.detail-note{line-height:1.6;color:#b9c3cc}.keypad-modal{width:min(90vw,390px)}.keypad-head{padding-top:12px;text-align:center}.door-mark{font-size:10px;letter-spacing:.22em;color:#8e9aa6}.code-display{margin:16px auto 8px;width:220px;padding:14px;background:#050708;border-radius:10px;color:#79ffad;font:900 32px monospace;letter-spacing:.18em}.code-message{min-height:22px;color:#9da9b4;font-size:13px}.keypad{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.keypad button{height:58px;border:1px solid #39424d;border-radius:13px;background:#202936;color:#fff;font-size:20px;font-weight:900}.keypad button:active{background:#334153}.keypad .enter{background:#704f1f;border-color:#a87a33;color:#ffe9b3}.keypad .clear{color:#ff8493}.memo-modal textarea{width:100%;height:45vh;resize:none;border-radius:14px;border:1px solid #34404c;background:#0b1118;color:#fff;padding:14px;line-height:1.55;outline:none}.result-modal{text-align:center}.result-modal h2{font-size:30px;margin:4px 0 10px}.result-modal p{color:#b6c0c9;line-height:1.6}.result-modal button{margin-top:12px}
+
+.flash-red{animation:flash .28s 2}.time-penalty{position:fixed;z-index:100;left:50%;top:120px;transform:translateX(-50%);font:900 24px monospace;color:#ff6275;text-shadow:0 2px 16px #000;pointer-events:none;animation:floatup 1s forwards}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.035)}}
+@keyframes flash{50%{filter:sepia(.8) saturate(5) hue-rotate(310deg)}}
+@keyframes floatup{0%{opacity:0;transform:translate(-50%,10px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}}
+
+@media (min-width:900px){.room{width:2200px;min-width:2200px}.hud{padding-left:24px;padding-right:24px}.bottom-hud{padding-left:24px;padding-right:24px}.room-title,.wall-label{left:72px}}
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <section id="startScreen" class="screen start-screen">
+      <div class="start-card">
+        <div class="eyebrow">K-ESCAPE / MOBILE</div>
+        <h1>시간의 방</h1>
+        <p>10개의 방. 방마다 독립 제한시간. 네 개의 단서를 조합해 4자리 숫자를 찾아 탈출하세요.</p>
+        <div class="start-rules">
+          <span>↔ 화면을 좌우로 끌어 탐색</span>
+          <span>◈ 단서 4개를 조합</span>
+          <span>⌛ 마지막 60초 긴장음</span>
+        </div>
+        <button id="startBtn" class="primary-btn">게임 시작</button>
+        <small>첫 터치로 모바일 브라우저의 사운드 재생 권한을 활성화합니다.</small>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen game-screen hidden">
+      <header class="hud">
+        <div class="stage-pill"><span id="stageNo">ROOM 01</span><b id="stageName">기억의 서재</b></div>
+        <div id="timer" class="timer" aria-live="polite">07:00</div>
+        <button id="memoBtn" class="icon-btn" aria-label="메모 열기">✎</button>
+      </header>
+
+      <div class="progress" id="progress"></div>
+
+      <main id="viewport" class="viewport" aria-label="좌우로 움직일 수 있는 방">
+        <div id="room" class="room"></div>
+      </main>
+
+      <div class="bottom-hud">
+        <div class="swipe-tip">◀ 좌우로 드래그해 방 전체를 조사하세요 ▶</div>
+        <button id="hintBtn" class="hint-btn">힌트 <span id="hintCost">−30초</span></button>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="clueDialog" class="modal">
+    <button class="close-btn" data-close>×</button>
+    <div id="clueDetail"></div>
+  </dialog>
+
+  <dialog id="keypadDialog" class="modal keypad-modal">
+    <button class="close-btn" data-close>×</button>
+    <div class="keypad-head">
+      <div class="door-mark">EXIT / 4 DIGITS</div>
+      <div id="codeDisplay" class="code-display">····</div>
+      <div id="codeMessage" class="code-message">네 자리 암호를 입력하세요</div>
+    </div>
+    <div id="keypad" class="keypad"></div>
+  </dialog>
+
+  <dialog id="memoDialog" class="modal memo-modal">
+    <button class="close-btn" data-close>×</button>
+    <h2>관찰 메모</h2>
+    <textarea id="memo" placeholder="눈에 띈 규칙이나 숫자를 적어두세요."></textarea>
+  </dialog>
+
+  <dialog id="resultDialog" class="modal result-modal">
+    <div id="resultContent"></div>
+  </dialog>
+
+  <script>
+const ROOM_DATA = [
+  {
+    name:'기억의 서재', minutes:7, answer:'7504', theme:1,
+    intro:'각 단서는 하나의 숫자를 만든다. 문에 새겨진 ◇ → ○ → △ → □ 순서로 배열하라.',
+    order:'◇ → ○ → △ → □',
+    clues:[
+      {symbol:'◇', title:'증가하는 수열', kind:'blueprint', art:'<div class="big">2 · 5 · 10 · 17 · 26 · ?</div>', note:'차이의 규칙을 찾고, 다음 수의 일의 자리만 사용한다.', hint:'증가량은 3, 5, 7, 9… 홀수로 늘어난다.'},
+      {symbol:'○', title:'도형의 무게', kind:'', art:'<div class="mid">⬟ + ⬟ + △ = 13<br>△ = 3<br>⬟ = ?</div>', note:'같은 모양은 같은 값을 가진다.', hint:'먼저 삼각형 값을 식에 넣는다.'},
+      {symbol:'△', title:'격자의 차이', kind:'dark', art:'<div class="mid">┌ 3&nbsp;&nbsp;1 ┐<br>└ 2&nbsp;&nbsp;4 ┘<br><small>|3×4 − 1×2| → 일의 자리</small></div>', note:'두 대각선 곱의 차를 계산하고 일의 자리만 취한다.', hint:'12 − 2 = 10이다.'},
+      {symbol:'□', title:'각도의 시계', kind:'redpaper', art:'<div class="mid">12<br><span style="font-size:58px">◴</span><br>시침이 120° 이동</div>', note:'12시에서 시침이 120° 움직였다. 가리키는 숫자는?', hint:'시계 한 칸은 30°다.'}
+    ]
+  },
+  {
+    name:'뒤집힌 화실', minutes:7, answer:'3816', theme:2,
+    intro:'거울·회전·방향이 핵심이다. 벽 하단의 색점 순서: 청 → 적 → 백 → 황.', order:'청 → 적 → 백 → 황',
+    clues:[
+      {symbol:'청', title:'거울 숫자', kind:'dark', art:'<div class="big" style="transform:scaleX(-1)">3</div>', note:'거울에 비친 모양을 정상 방향으로 읽는다.', hint:'화면을 마음속으로 좌우 반전한다.'},
+      {symbol:'적', title:'나침반 회전', kind:'blueprint', art:'<div class="mid">N ↑<br>↻ 90° × 2<br>? = 숫자키 방향</div>', note:'북쪽 화살표를 두 번 90° 회전한 뒤, 숫자키 배열에서 같은 방향의 가운데 숫자를 본다.', hint:'두 번 돌면 남쪽. 3×3 숫자키에서 아래 가운데는 8.'},
+      {symbol:'백', title:'대칭 타일', kind:'', art:'<div class="shape-row">◩ ◧ ◩ ◧ ◩</div><div class="tiny">대칭축의 수 = ?</div>', note:'연속 무늬 전체에서 세로 대칭축의 개수를 센다.', hint:'가운데를 기준으로 전체 패턴을 접어 본다.'},
+      {symbol:'황', title:'주사위의 반대면', kind:'redpaper', art:'<div class="mid">●<br>주사위에서 1의 반대면</div>', note:'표준 주사위의 마주 보는 두 면의 합은 일정하다.', hint:'마주 보는 면의 합은 7.'}
+    ]
+  },
+  {
+    name:'신호실', minutes:8, answer:'4269', theme:3,
+    intro:'소리 대신 빛과 짧은/긴 신호가 남아 있다. 표식 순서대로 네 값을 얻어라.', order:'● → ▲ → ■ → ✦',
+    clues:[
+      {symbol:'●', title:'점·선 신호', kind:'dark', art:'<div class="big">····-</div>', note:'점과 선으로 구성된 숫자 신호.', hint:'모스 숫자표에서 ····- 는 4.'},
+      {symbol:'▲', title:'LED 비트', kind:'blueprint', art:'<div class="binary"><i></i><i></i><i class="on"></i><i></i></div><div class="tiny">8 4 2 1</div>', note:'켜진 LED의 자리값을 더한다.', hint:'세 번째 자리만 켜져 있다.'},
+      {symbol:'■', title:'점 배열', kind:'', art:'<div class="dot-grid"><b class="on"></b><b></b><b class="on"></b><b class="on"></b><b class="on"></b><b></b><b></b><b class="on"></b><b class="on"></b></div>', note:'켜진 점의 총개수를 센다.', hint:'검게 채워진 원은 총 6개.'},
+      {symbol:'✦', title:'세그먼트 결손', kind:'redpaper', art:'<div class="big">8 − ━ = ?</div><div class="tiny">7-segment</div>', note:'7세그먼트 숫자 8에서 왼쪽 아래 막대 하나를 제거하면?', hint:'일반 디지털 숫자 모양을 떠올린다. 정답은 9.'}
+    ]
+  },
+  {
+    name:'좌표의 방', minutes:8, answer:'7524', theme:4,
+    intro:'경로·좌표·행렬을 읽는다. 결과는 지도 모서리의 ①②③④ 순서.', order:'① → ② → ③ → ④',
+    clues:[
+      {symbol:'①', title:'격자 이동', kind:'blueprint', art:'<div class="mid">START (2,2)<br>→ → ↑ ← ↑<br>x+y = ?</div>', note:'한 칸씩 이동한 최종 좌표의 x+y.', hint:'최종 좌표는 (3,4).'},
+      {symbol:'②', title:'좌표 거리', kind:'', art:'<div class="mid">A(1,1) · B(1,3)<br>|Δy| = ?</div>', note:'두 점의 세로 거리.', hint:'3−1을 계산한다.'},
+      {symbol:'③', title:'회전 지도', kind:'dark', art:'<div class="mid">↑ = 1<br>→ = 2<br>↓ = 3<br>← = 4<br><b>→</b></div>', note:'굵은 화살표의 값을 읽는다.', hint:'오른쪽 화살표는 2.'},
+      {symbol:'④', title:'면적 타일', kind:'redpaper', art:'<div class="mid">2 × 2<br>■ ■<br>■ ■</div>', note:'단위 정사각형으로 이뤄진 도형의 넓이.', hint:'2×2.'}
+    ]
+  },
+  {
+    name:'문양 보관실', minutes:9, answer:'9453', theme:5,
+    intro:'그림 자체보다 “규칙”을 읽어야 한다. 네 문양의 값은 자개함의 배열순서로 입력.', order:'학 → 구름 → 매화 → 창살',
+    clues:[
+      {symbol:'학', title:'반복 문양', kind:'', art:'<div class="big">◇◇◆ ◇◇◆ ◇◇?</div>', note:'3개씩 반복되는 패턴의 빈칸을 값으로 본다. ◆=9, ◇=4.', hint:'세 번째 자리는 항상 ◆.'},
+      {symbol:'구름', title:'겹친 고리', kind:'blueprint', art:'<div class="shape-row">◯ ◉ ◯ ◉ ◯</div><div class="tiny">채워진 중심의 개수 × 2</div>', note:'중심이 채워진 고리 수에 2를 곱한다.', hint:'채워진 중심은 2개다.'},
+      {symbol:'매화', title:'꽃잎 연산', kind:'redpaper', art:'<div class="mid">✿ = 꽃잎 수<br>✿ − 0 = ?</div>', note:'보이는 꽃잎 수를 그대로 사용한다.', hint:'다섯 장 꽃잎.'},
+      {symbol:'창살', title:'교차점', kind:'dark', art:'<div class="big">╳</div><div class="tiny">선분 3개가 한 점에서 교차</div>', note:'교차하는 선분의 총 개수.', hint:'가운데서 만나는 선을 각각 센다.'}
+    ]
+  },
+  {
+    name:'전산 기록실', minutes:10, answer:'1017', theme:6,
+    intro:'2진수·논리·인덱스를 섞는다. 순서는 모니터의 포트 번호 A→D.', order:'A → B → C → D',
+    clues:[
+      {symbol:'A', title:'4비트', kind:'dark', art:'<div class="binary"><i></i><i></i><i></i><i class="on"></i></div><div class="tiny">8 4 2 1</div>', note:'켜진 비트들의 값을 더한다.', hint:'맨 오른쪽만 ON.'},
+      {symbol:'B', title:'XOR', kind:'blueprint', art:'<div class="mid">1 XOR 1 = ?</div>', note:'두 값이 다를 때만 1인 연산.', hint:'둘이 같으면 0.'},
+      {symbol:'C', title:'패리티', kind:'', art:'<div class="mid">1 0 1 0 1 1<br>EVEN parity bit = ?</div>', note:'전체 1의 개수가 짝수가 되도록 마지막 비트를 정한다.', hint:'현재 1은 4개.'},
+      {symbol:'D', title:'배열 인덱스', kind:'redpaper', art:'<div class="mid">[9,4,8,7,2]<br>index 3</div>', note:'인덱스는 0부터 시작한다.', hint:'0,1,2,3번째 순으로 센다.'}
+    ]
+  },
+  {
+    name:'수학자의 작업실', minutes:11, answer:'2842', theme:7,
+    intro:'단일 관찰로는 부족하다. 각 단서 안에서 계산을 한 번 더 해야 한다.', order:'α → β → γ → δ',
+    clues:[
+      {symbol:'α', title:'마방진', kind:'blueprint', art:'<div class="mid">8 1 6<br>3 5 7<br>4 9 ?</div>', note:'모든 행·열·대각선의 합이 같다.', hint:'첫 행의 합은 15.'},
+      {symbol:'β', title:'나머지', kind:'dark', art:'<div class="big">44 mod 9</div>', note:'나눗셈의 나머지.', hint:'9×4=36.'},
+      {symbol:'γ', title:'함수 상자', kind:'', art:'<div class="mid">f(x)=2x−2<br>f(3)=?</div>', note:'주어진 x를 식에 대입한다.', hint:'6−2.'},
+      {symbol:'δ', title:'최대공약수', kind:'redpaper', art:'<div class="big">gcd(6,8)</div>', note:'두 수의 가장 큰 공약수.', hint:'6의 약수와 8의 약수를 비교한다.'}
+    ]
+  },
+  {
+    name:'암호 인쇄소', minutes:12, answer:'3448', theme:8,
+    intro:'치환표와 위치 규칙이 섞여 있다. 먼저 해독하고, 숫자로 변환해야 한다.', order:'◆ → ● → ▲ → ■',
+    clues:[
+      {symbol:'◆', title:'카이사르 이동', kind:'dark', art:'<div class="mid">D → A<br>E → B<br>F → C<br>G → ?</div>', note:'알파벳을 세 칸 뒤로 이동한 뒤 A=1, B=2…로 바꾼다.', hint:'G를 세 칸 뒤로 이동하면 D.'},
+      {symbol:'●', title:'키패드 문자', kind:'blueprint', art:'<div class="mid">ABC=2<br>DEF=3<br>GHI=4<br><b>H</b> = ?</div>', note:'휴대전화 문자 키패드 그룹을 이용한다.', hint:'H는 GHI 그룹.'},
+      {symbol:'▲', title:'점의 위치', kind:'', art:'<div class="symbol-grid"><span>○</span><span>○</span><span>○</span><span>●</span><span>○</span><span>○</span><span>○</span><span>○</span><span>○</span></div>', note:'3×3 배열을 왼쪽 위부터 1~9로 센다.', hint:'채워진 점은 4번째 칸.'},
+      {symbol:'■', title:'팔각형', kind:'redpaper', art:'<div style="font-size:82px">⯃</div><div class="tiny">변의 수</div>', note:'도형의 변 개수.', hint:'팔각형.'}
+    ]
+  },
+  {
+    name:'관측소', minutes:13, answer:'2715', theme:9,
+    intro:'한 단서의 결과가 다음 단서를 읽는 방법이 된다. 번호순으로 연결하라.', order:'I → II → III → IV',
+    clues:[
+      {symbol:'I', title:'별의 간격', kind:'dark', art:'<div class="big">★ · ★ · · ★ · · · ★</div>', note:'별 사이 점 개수: 1,2,3. 다음 간격의 점 개수가 첫 숫자.', hint:'다음 간격은 4개의 점이 아니라 “간격 수열의 다음 값”을 이용해 2로 나눈다.'},
+      {symbol:'II', title:'렌즈 배율', kind:'blueprint', art:'<div class="mid">14× lens<br>÷ I = ?</div>', note:'첫 단서의 값을 사용한다.', hint:'I의 결과를 2로 두고 14÷2.'},
+      {symbol:'III', title:'시간각', kind:'', art:'<div class="mid">30° = 2h<br>15° = ?h</div>', note:'비례식.', hint:'각도가 절반이면 시간도 절반.'},
+      {symbol:'IV', title:'관측 횟수', kind:'redpaper', art:'<div class="mid">● ● ● ● ●<br>성공률 100%</div>', note:'성공한 관측 횟수 그대로.', hint:'표시된 점의 개수.'}
+    ]
+  },
+  {
+    name:'제로 룸', minutes:15, answer:'5249', theme:10,
+    intro:'마지막 방. 네 단서는 서로 다른 방식으로 값을 만들고, 문양 순서는 다른 단서 안에 숨겨져 있다.', order:'달 → 문 → 눈 → 열쇠',
+    clues:[
+      {symbol:'달', title:'순환 수열', kind:'dark', art:'<div class="mid">1 → 2 → 4 → 8 → 7 → 5 → 1<br>8에서 화살표를 두 번 이동</div>', note:'화살표 방향으로 8에서 두 번 이동해 도착한 값.', hint:'8에서 한 번 이동하면 7, 두 번 이동하면 5다.'},
+      {symbol:'문', title:'행렬 흔적', kind:'blueprint', art:'<div class="mid">┌ 1 9 ┐<br>└ 3 1 ┘<br>trace = ?</div>', note:'주대각선 원소의 합.', hint:'왼쪽 위 + 오른쪽 아래.'},
+      {symbol:'눈', title:'접힌 종이', kind:'', art:'<div class="mid">□ → 반으로 접기 → 또 반으로 접기<br>펼쳤을 때 같은 영역 수</div>', note:'두 번 반으로 접으면 원래 종이는 몇 개의 같은 영역으로 나뉘는가?', hint:'2×2.'},
+      {symbol:'열쇠', title:'최종 치환', kind:'redpaper', art:'<div class="paper-lines"></div><div class="tiny">◇=9 ○=2 △=6 □=4<br>첫 줄의 첫 기호</div>', note:'표의 치환값을 적용한다.', hint:'첫 줄의 첫 기호는 ◇.'}
+    ]
+  }
+];
+
+// Stage 9 clue I intentionally resolves to 2 via the room's printed calibration rule.
+ROOM_DATA[8].clues[0].art += '<div class="tiny">관측기 보정: 다음 간격값 ÷ 2</div>';
+
+const $ = s => document.querySelector(s);
+const startScreen = $('#startScreen');
+const gameScreen = $('#gameScreen');
+const roomEl = $('#room');
+const viewport = $('#viewport');
+const timerEl = $('#timer');
+const stageNoEl = $('#stageNo');
+const stageNameEl = $('#stageName');
+const progressEl = $('#progress');
+const clueDialog = $('#clueDialog');
+const clueDetail = $('#clueDetail');
+const keypadDialog = $('#keypadDialog');
+const codeDisplay = $('#codeDisplay');
+const codeMessage = $('#codeMessage');
+const memoDialog = $('#memoDialog');
+const memo = $('#memo');
+const resultDialog = $('#resultDialog');
+const resultContent = $('#resultContent');
+
+let stageIndex = 0;
+let remaining = 0;
+let timerId = null;
+let entered = '';
+let audioCtx = null;
+let tensionTimer = null;
+let lastTensionSecond = null;
+let hintIndex = 0;
+let gameActive = false;
+
+function createAudio(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq=440,dur=.08,vol=.03,type='sine'){
+  if(!audioCtx) return;
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type=type;o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);
+  const t=audioCtx.currentTime;o.start(t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.stop(t+dur);
+}
+function tensionPulse(){
+  if(!gameActive || remaining>60 || remaining<=0 || lastTensionSecond===remaining) return;
+  lastTensionSecond=remaining;
+  let cadence = remaining<=10 ? 1 : remaining<=30 ? 2 : 4;
+  if(remaining%cadence===0){
+    tone(remaining<=10?760:remaining<=30?620:480,.08,remaining<=10?.065:.035,'square');
+    setTimeout(()=>tone(remaining<=10?920:680,.055,remaining<=10?.05:.025,'sine'),95);
+  }
+}
+function formatTime(s){const m=Math.floor(s/60), sec=Math.max(0,s%60);return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`}
+function updateTimer(){
+  timerEl.textContent=formatTime(remaining);
+  timerEl.classList.toggle('warning',remaining<=60&&remaining>30);
+  timerEl.classList.toggle('danger',remaining<=30);
+  tensionPulse();
+}
+function startRoomTimer(){
+  clearInterval(timerId);
+  remaining=ROOM_DATA[stageIndex].minutes*60;
+  lastTensionSecond=null;updateTimer();
+  timerId=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(timerId);roomFailed();}},1000);
+}
+function penalty(seconds, label=`−${seconds}초`){
+  remaining=Math.max(1,remaining-seconds);updateTimer();
+  const el=document.createElement('div');el.className='time-penalty';el.textContent=label;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+  gameScreen.classList.remove('flash-red');void gameScreen.offsetWidth;gameScreen.classList.add('flash-red');
+  tone(150,.18,.055,'sawtooth');
+}
+function buildProgress(){
+  progressEl.innerHTML='';ROOM_DATA.forEach((_,i)=>{const x=document.createElement('i');if(i<stageIndex)x.className='done';else if(i===stageIndex)x.className='current';progressEl.appendChild(x)});
+}
+function cluePosition(i){
+  const positions=[
+    {l:160,t:260,r:'-2deg'},{l:650,t:390,r:'1.5deg'},{l:1080,t:210,r:'-1deg'},{l:1390,t:430,r:'2deg'}
+  ];return positions[i];
+}
+function renderRoom(){
+  const d=ROOM_DATA[stageIndex];
+  stageNoEl.textContent=`ROOM ${String(stageIndex+1).padStart(2,'0')}`;stageNameEl.textContent=d.name;buildProgress();
+  roomEl.className=`room room-theme-${d.theme}`;
+  roomEl.innerHTML=`
+    <div class="wall-label">ROOM ${String(stageIndex+1).padStart(2,'0')} / ${d.order}</div>
+    <div class="room-title">${d.name}</div>
+    <div class="prop lamp"></div><div class="prop desk"></div><div class="prop shelf"></div><div class="prop window"></div>
+    ${d.clues.map((c,i)=>{const p=cluePosition(i);return `<button class="clue" data-clue="${i}" style="left:${p.l}px;top:${p.t}px;--r:${p.r}"><div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
+    <button class="exit-zone" id="exitDoor" aria-label="4자리 번호키 출구문">
+      <div class="door"><div class="keypad-preview"><div class="slots">••••</div><div class="keys">${'<i></i>'.repeat(12)}</div></div><div class="door-cta">4자리 코드를 입력해 탈출</div></div>
+    </button>`;
+  roomEl.querySelectorAll('.clue').forEach(b=>b.addEventListener('click',()=>openClue(+b.dataset.clue)));
+  $('#exitDoor').addEventListener('click',openKeypad);
+  viewport.scrollLeft=0;hintIndex=0;entered='';memo.value='';
+  startRoomTimer();
+}
+function openClue(i){
+  const c=ROOM_DATA[stageIndex].clues[i];
+  clueDetail.innerHTML=`<div class="detail-card"><div class="eyebrow">${c.symbol} / CLUE ${i+1}</div><h2>${c.title}</h2><div class="detail-art clue-art ${c.kind}">${c.art}</div><p class="detail-note">${c.note}</p></div>`;
+  clueDialog.showModal();tone(430,.05,.02);
+}
+function buildKeypad(){
+  const labels=['1','2','3','4','5','6','7','8','9','C','0','↵'];
+  $('#keypad').innerHTML=labels.map(x=>`<button class="${x==='C'?'clear':''} ${x==='↵'?'enter':''}" data-key="${x}">${x}</button>`).join('');
+  $('#keypad').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>keyPress(b.dataset.key)));
+}
+function openKeypad(){entered='';codeMessage.textContent='네 자리 암호를 입력하세요';refreshCode();keypadDialog.showModal();tone(520,.07,.025)}
+function refreshCode(){codeDisplay.textContent=(entered+'····').slice(0,4)}
+function keyPress(k){createAudio();tone(300+Math.random()*120,.035,.012,'square');
+  if(k==='C'){entered='';refreshCode();return}
+  if(k==='↵'){
+    if(entered.length!==4){codeMessage.textContent='네 자리를 모두 입력하세요.';return}
+    if(entered===ROOM_DATA[stageIndex].answer){roomSolved()}else{codeMessage.textContent='잠금 해제 실패. 시간이 줄어듭니다.';entered='';refreshCode();penalty(20)}
+    return;
+  }
+  if(entered.length<4){entered+=k;refreshCode()}
+}
+function roomSolved(){
+  clearInterval(timerId);tone(660,.11,.05);setTimeout(()=>tone(880,.14,.045),120);keypadDialog.close();
+  const used=ROOM_DATA[stageIndex].minutes*60-remaining;
+  resultContent.innerHTML=`<div class="eyebrow">ROOM CLEAR</div><h2>${stageIndex+1}번 방 탈출</h2><p>남은 시간 <b>${formatTime(remaining)}</b><br>클리어 시간 ${formatTime(used)}</p><button id="nextBtn" class="primary-btn">${stageIndex===ROOM_DATA.length-1?'최종 결과 보기':'다음 방으로'}</button>`;
+  resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}};
+}
+function roomFailed(){
+  gameActive=false;tone(110,.55,.07,'sawtooth');
+  resultContent.innerHTML=`<div class="eyebrow">TIME OVER</div><h2>${stageIndex+1}번 방에서 시간이 끝났습니다</h2><p>이 방의 제한시간은 ${ROOM_DATA[stageIndex].minutes}분입니다. 같은 방부터 다시 도전할 수 있습니다.</p><button id="retryBtn" class="primary-btn">이 방 다시 시작</button>`;
+  resultDialog.showModal();$('#retryBtn').onclick=()=>{resultDialog.close();gameActive=true;renderRoom()};
+}
+function finishGame(){
+  clearInterval(timerId);gameActive=false;
+  resultContent.innerHTML=`<div class="eyebrow">ESCAPE COMPLETE</div><h2>10개의 방을 모두 탈출했습니다</h2><p>관찰, 암호, 수학, 방향, 논리를 모두 통과했습니다.</p><button id="restartBtn" class="primary-btn">처음부터 다시</button>`;
+  resultDialog.showModal();$('#restartBtn').onclick=()=>location.reload();
+}
+function useHint(){
+  if(hintIndex>=4){penalty(10,'힌트 모두 사용');return}
+  const c=ROOM_DATA[stageIndex].clues[hintIndex];penalty(30);alert(`힌트 ${hintIndex+1} (${c.symbol})\n${c.hint}`);hintIndex++;
+}
+function startGame(){
+  createAudio();tone(520,.06,.025);startScreen.classList.add('hidden');gameScreen.classList.remove('hidden');gameActive=true;stageIndex=0;renderRoom();
+}
+
+$('#startBtn').addEventListener('click',startGame);$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
+buildKeypad();
+
+// Drag-to-pan: the room remains wider than the phone screen; it is never scaled down.
+let drag=false,startX=0,startScroll=0;
+viewport.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag=true;startX=e.clientX;startScroll=viewport.scrollLeft;viewport.classList.add('dragging');viewport.setPointerCapture(e.pointerId)});
+viewport.addEventListener('pointermove',e=>{if(!drag)return;viewport.scrollLeft=startScroll-(e.clientX-startX)});
+viewport.addEventListener('pointerup',()=>{drag=false;viewport.classList.remove('dragging')});viewport.addEventListener('pointercancel',()=>{drag=false;viewport.classList.remove('dragging')});
+
+window.addEventListener('keydown',e=>{if(keypadDialog.open && /[0-9]/.test(e.key))keyPress(e.key);if(keypadDialog.open&&e.key==='Enter')keyPress('↵');if(keypadDialog.open&&e.key==='Backspace')keyPress('C')});
+
+
+
+  </script>
+</body>
+</html>
