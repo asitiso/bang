@@ -268,6 +268,17 @@ button{cursor:pointer}
 
 .bottom-hud{position:fixed;z-index:50;left:0;right:0;bottom:0;padding:8px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;background:linear-gradient(to top,rgba(4,7,10,.97),rgba(4,7,10,.65),transparent)}.swipe-tip{flex:1;min-width:0;font-size:11px;color:#d2d8de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint-btn{flex:none;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:#151d27;color:white;padding:10px 12px;font-weight:800}.hint-btn span{font-size:10px;color:#ffbd75;margin-left:4px}
 
+
+.hint-modal{width:min(92vw,430px)}
+.hint-modal h2{margin:4px 0 6px}.hint-modal p{margin:0 0 15px;color:#aeb9c3;line-height:1.5;font-size:13px}
+.hint-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.hint-choice{min-height:78px;border:1px solid #334150;border-radius:14px;background:#17202b;color:#fff;padding:12px;text-align:left;transition:.15s}
+.hint-choice:active{transform:scale(.98)}.hint-choice b{display:block;color:#ffd879;font-size:16px;margin-bottom:4px}.hint-choice small{display:block;color:#aeb8c2;line-height:1.35}
+.hint-choice.used{border-color:#2f7550;background:#10281c}.hint-choice.used b{color:#8effae}
+.hint-choice.used::after{content:"구매 완료";display:block;margin-top:5px;color:#73d996;font-size:10px;font-weight:900}
+.hint-result{margin-top:14px;min-height:74px;padding:14px;border-radius:13px;background:#0a1017;border:1px solid #2b3743;color:#e8edf2;line-height:1.55}
+.hint-result.empty{color:#788693;display:grid;place-items:center;text-align:center}
+
 .modal{width:min(92vw,480px);border:1px solid rgba(255,255,255,.13);border-radius:22px;background:#111821;color:white;box-shadow:var(--shadow);padding:22px}.modal::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}.close-btn{position:absolute;right:10px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:#222c37;color:#fff;font-size:22px}.detail-card{padding-top:18px}.detail-card h2{margin:0 0 8px}.detail-art{min-height:210px;border-radius:16px;margin:18px 0;display:grid;place-items:center;background:#e9e3d6;color:#141414;padding:16px}.detail-note{line-height:1.6;color:#b9c3cc}.keypad-modal{width:min(90vw,390px)}.keypad-head{padding-top:12px;text-align:center}.door-mark{font-size:10px;letter-spacing:.22em;color:#8e9aa6}.code-display{margin:16px auto 8px;width:220px;padding:14px;background:#050708;border-radius:10px;color:#79ffad;font:900 32px monospace;letter-spacing:.18em}.code-message{min-height:22px;color:#9da9b4;font-size:13px}.keypad{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.keypad button{height:58px;border:1px solid #39424d;border-radius:13px;background:#202936;color:#fff;font-size:20px;font-weight:900}.keypad button:active{background:#334153}.keypad .enter{background:#704f1f;border-color:#a87a33;color:#ffe9b3}.keypad .clear{color:#ff8493}.memo-modal textarea{width:100%;height:45vh;resize:none;border-radius:14px;border:1px solid #34404c;background:#0b1118;color:#fff;padding:14px;line-height:1.55;outline:none}.result-modal{text-align:center}.result-modal h2{font-size:30px;margin:4px 0 10px}.result-modal p{color:#b6c0c9;line-height:1.6}.result-modal button{margin-top:12px}
 
 .flash-red{animation:flash .28s 2}.time-penalty{position:fixed;z-index:100;left:50%;top:120px;transform:translateX(-50%);font:900 24px monospace;color:#ff6275;text-shadow:0 2px 16px #000;pointer-events:none;animation:floatup 1s forwards}
@@ -345,7 +356,7 @@ button{cursor:pointer}
 
       <div class="bottom-hud">
         <div class="swipe-tip">◀ 좌우로 드래그해 방 전체를 조사하세요 ▶</div>
-        <button id="hintBtn" class="hint-btn">힌트 <span id="hintCost">−30초</span></button>
+        <button id="hintBtn" class="hint-btn">힌트 <span id="hintCost">−2분</span></button>
       </div>
     </section>
   </div>
@@ -363,6 +374,15 @@ button{cursor:pointer}
       <div id="codeMessage" class="code-message">네 자리 암호를 입력하세요</div>
     </div>
     <div id="keypad" class="keypad"></div>
+  </dialog>
+
+  <dialog id="hintDialog" class="modal hint-modal">
+    <button class="close-btn" data-close>×</button>
+    <div class="eyebrow">HINT SELECT</div>
+    <h2>힌트를 선택하세요</h2>
+    <p>처음 여는 힌트는 <b>2분 차감</b>됩니다. 이미 연 힌트는 무료로 다시 볼 수 있습니다.</p>
+    <div id="hintChoices" class="hint-grid"></div>
+    <div id="hintResult" class="hint-result empty">1~4번 중 원하는 힌트를 선택하세요.</div>
   </dialog>
 
   <dialog id="memoDialog" class="modal memo-modal">
@@ -552,6 +572,9 @@ const clueDetail = $('#clueDetail');
 const keypadDialog = $('#keypadDialog');
 const codeDisplay = $('#codeDisplay');
 const codeMessage = $('#codeMessage');
+const hintDialog = $('#hintDialog');
+const hintChoices = $('#hintChoices');
+const hintResult = $('#hintResult');
 const memoDialog = $('#memoDialog');
 const memo = $('#memo');
 const resultDialog = $('#resultDialog');
@@ -573,6 +596,7 @@ let audioResumePromise = null;
 let tensionTimer = null;
 let lastTensionSecond = null;
 let hintIndex = 0;
+let usedHints = new Set();
 let gameActive = false;
 let chainProgress = 0;
 let activeClueIndex = null;
@@ -899,7 +923,7 @@ function renderRoom(){
     </button>`;
   roomEl.querySelectorAll('.clue').forEach(b=>b.addEventListener('click',()=>openClue(+b.dataset.clue)));
   $('#exitDoor').addEventListener('click',openKeypad);
-  viewport.scrollLeft=0;hintIndex=0;entered='';memo.value='';
+  viewport.scrollLeft=0;hintIndex=0;usedHints=new Set();entered='';memo.value='';
   updateChainLocks();
   startRoomTimer();
   startBgmForRoom();
@@ -1055,13 +1079,51 @@ function finishGame(){
   resultContent.innerHTML=`<div class="eyebrow">ESCAPE COMPLETE</div><h2>15개의 방을 모두 탈출했습니다</h2><p>관찰, 암호, 수학, 방향, 논리를 모두 통과했습니다.</p><button id="restartBtn" class="primary-btn">처음부터 다시</button>`;
   resultDialog.showModal();$('#restartBtn').onclick=()=>location.reload();
 }
-function useHint(){
-  if(isChainStage()){
-    if(chainProgress>=4){showChainToast('해제한 네 숫자를 순서대로 출구 번호키에 입력하세요.');return}
-    const c=ROOM_DATA[stageIndex].clues[chainProgress];penalty(30);alert(`현재 연쇄 힌트 ${chainProgress+1} (${c.symbol})\n${c.hint}`);return;
+function renderHintChoices(){
+  const d=ROOM_DATA[stageIndex];
+  hintChoices.innerHTML=d.clues.map((c,i)=>`
+    <button class="hint-choice ${usedHints.has(i)?'used':''}" data-hint="${i}">
+      <b>힌트 ${i+1}</b>
+      <small>${c.symbol} · ${c.title}</small>
+    </button>`).join('');
+  hintChoices.querySelectorAll('.hint-choice').forEach(btn=>{
+    btn.addEventListener('click',()=>selectHint(+btn.dataset.hint));
+  });
+}
+function chargeHintTime(){
+  remaining-=120;
+  if(remaining<=0){
+    remaining=0;updateTimer();
+    try{if(hintDialog.open)hintDialog.close()}catch{}
+    clearInterval(timerId);
+    roomFailed();
+    return false;
   }
-  if(hintIndex>=4){penalty(10,'힌트 모두 사용');return}
-  const c=ROOM_DATA[stageIndex].clues[hintIndex];penalty(30);alert(`힌트 ${hintIndex+1} (${c.symbol})\n${c.hint}`);hintIndex++;
+  updateTimer();
+  const el=document.createElement('div');
+  el.className='time-penalty';el.textContent='−2분';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+  gameScreen.classList.remove('flash-red');void gameScreen.offsetWidth;gameScreen.classList.add('flash-red');
+  tone(150,.18,.055,'sawtooth');
+  return true;
+}
+function selectHint(i){
+  const c=ROOM_DATA[stageIndex].clues[i];
+  const already=usedHints.has(i);
+  if(!already){
+    if(!chargeHintTime())return;
+    usedHints.add(i);
+    renderHintChoices();
+  }
+  hintResult.classList.remove('empty');
+  hintResult.innerHTML=`<b>힌트 ${i+1} · ${c.symbol}</b><br>${c.hint}${already?'<br><small style="color:#73d996">이미 구매한 힌트 · 추가 차감 없음</small>':''}`;
+  tone(already?520:620,.06,.02,'sine');
+}
+function useHint(){
+  renderHintChoices();
+  hintResult.className='hint-result empty';
+  hintResult.textContent='1~4번 중 원하는 힌트를 선택하세요.';
+  hintDialog.showModal();
 }
 function startGame(){
   if(gameActive)return;
