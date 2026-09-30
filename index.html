@@ -584,7 +584,7 @@ function createAudio(){
   if(!audioCtx){
     const AC=window.AudioContext||window.webkitAudioContext;
     if(!AC)return null;
-    audioCtx=new AC({latencyHint:'interactive'});
+    try{audioCtx=new AC({latencyHint:'interactive'})}catch(e){audioCtx=new AC()}
 
     sfxBus=audioCtx.createGain();
     sfxBus.gain.value=.92;
@@ -1063,14 +1063,27 @@ function useHint(){
   if(hintIndex>=4){penalty(10,'힌트 모두 사용');return}
   const c=ROOM_DATA[stageIndex].clues[hintIndex];penalty(30);alert(`힌트 ${hintIndex+1} (${c.symbol})\n${c.hint}`);hintIndex++;
 }
-async function startGame(){
-  await unlockAudio();
-  tone(520,.06,.025);
-  startScreen.classList.add('hidden');gameScreen.classList.remove('hidden');
-  gameActive=true;stageIndex=0;renderRoom();
+function startGame(){
+  if(gameActive)return;
+  startScreen.classList.add('hidden');
+  gameScreen.classList.remove('hidden');
+  gameActive=true;
+  stageIndex=0;
+  renderRoom();
+
+  // Never block game entry on browser audio permission/resume.
+  try{
+    const p=unlockAudio();
+    Promise.resolve(p).then(ok=>{
+      if(ok){
+        tone(520,.06,.025);
+        if(gameActive && bgmNodes.length===0)startBgmForRoom();
+      }
+    }).catch(()=>{});
+  }catch(e){}
 }
 
-$('#startBtn').addEventListener('click',startGame);$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
+$('#startBtn').addEventListener('click',e=>{e.preventDefault();startGame()});$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 // Browser autoplay-policy recovery:
