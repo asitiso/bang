@@ -281,6 +281,10 @@ button{cursor:pointer}
 .hint-choice.used{border-color:#2f7550;background:#10281c}.hint-choice.used b{color:#8effae}
 .hint-choice.used::after{content:"구매 완료";display:block;margin-top:5px;color:#73d996;font-size:10px;font-weight:900}
 .hint-result{margin-top:14px;min-height:74px;padding:14px;border-radius:13px;background:#0a1017;border:1px solid #2b3743;color:#e8edf2;line-height:1.55}
+.hint-confirm-modal{width:min(90vw,390px);text-align:center}.hint-confirm-modal h2{margin:8px 0 10px}.hint-confirm-modal p{color:#aeb9c3;line-height:1.5}
+.hint-confirm-warning{margin:12px 0;padding:15px 14px;border-radius:13px;background:rgba(105,16,17,.8);border:1px solid rgba(255,92,72,.62);color:#ffd6cd;font-weight:900;box-shadow:0 0 28px rgba(255,55,35,.14)}
+.hint-confirm-warning b{color:#fff2a8;font-size:17px}.hint-confirm-actions{display:grid;grid-template-columns:1fr 1.3fr;gap:10px;margin-top:16px}
+.hint-confirm-actions .primary-btn,.hint-confirm-actions .secondary-btn{margin:0;padding:14px 10px;font-size:14px}
 .hint-result.empty{color:#788693;display:grid;place-items:center;text-align:center}
 
 .modal{width:min(92vw,480px);border:1px solid rgba(255,255,255,.13);border-radius:22px;background:#111821;color:white;box-shadow:var(--shadow);padding:22px}.modal::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}.close-btn{position:absolute;right:10px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:#222c37;color:#fff;font-size:22px}.detail-card{padding-top:18px}.detail-card h2{margin:0 0 8px}.detail-art{min-height:210px;border-radius:16px;margin:18px 0;display:grid;place-items:center;background:#e9e3d6;color:#141414;padding:16px}.detail-note{line-height:1.6;color:#b9c3cc}.keypad-modal{width:min(90vw,390px)}.keypad-head{padding-top:12px;text-align:center}.door-mark{font-size:10px;letter-spacing:.22em;color:#8e9aa6}.code-display{margin:16px auto 8px;width:220px;padding:14px;background:#050708;border-radius:10px;color:#79ffad;font:900 32px monospace;letter-spacing:.18em}.code-message{min-height:22px;color:#9da9b4;font-size:13px}.keypad{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.keypad button{height:58px;border:1px solid #39424d;border-radius:13px;background:#202936;color:#fff;font-size:20px;font-weight:900}.keypad button:active{background:#334153}.keypad .enter{background:#704f1f;border-color:#a87a33;color:#ffe9b3}.keypad .clear{color:#ff8493}.memo-modal textarea{width:100%;height:45vh;resize:none;border-radius:14px;border:1px solid #34404c;background:#0b1118;color:#fff;padding:14px;line-height:1.55;outline:none}.result-modal{text-align:center}.result-modal h2{font-size:30px;margin:4px 0 10px}.result-modal p{color:#b6c0c9;line-height:1.6}.result-modal button{margin-top:12px}
@@ -441,10 +445,20 @@ button{cursor:pointer}
     <button class="close-btn" data-close>×</button>
     <div class="eyebrow">HINT SELECT</div>
     <h2>힌트를 선택하세요</h2>
-    <div class="hint-warning">⚠ 힌트를 선택하면 <b>2분이 차감됩니다</b></div>
-    <p>이미 구매한 힌트는 추가 차감 없이 다시 볼 수 있습니다.</p>
+    <p>새 힌트는 확인 팝업 후 2분이 차감됩니다. 이미 구매한 힌트는 무료로 다시 볼 수 있습니다.</p>
     <div id="hintChoices" class="hint-grid"></div>
     <div id="hintResult" class="hint-result empty">1~4번 중 원하는 힌트를 선택하세요.</div>
+  </dialog>
+
+  <dialog id="hintConfirmDialog" class="modal hint-confirm-modal">
+    <div class="eyebrow">HINT WARNING</div>
+    <h2>힌트를 사용하시겠습니까?</h2>
+    <div class="hint-confirm-warning">⚠ 이 힌트를 열면 <b>2분이 차감됩니다</b></div>
+    <p id="hintConfirmLabel">선택한 힌트를 확인합니다.</p>
+    <div class="hint-confirm-actions">
+      <button id="hintConfirmCancel" class="secondary-btn">취소</button>
+      <button id="hintConfirmUse" class="primary-btn">2분 차감하고 보기</button>
+    </div>
   </dialog>
 
   <dialog id="memoDialog" class="modal memo-modal">
@@ -647,6 +661,10 @@ const codeMessage = $('#codeMessage');
 const hintDialog = $('#hintDialog');
 const hintChoices = $('#hintChoices');
 const hintResult = $('#hintResult');
+const hintConfirmDialog = $('#hintConfirmDialog');
+const hintConfirmLabel = $('#hintConfirmLabel');
+const hintConfirmCancel = $('#hintConfirmCancel');
+const hintConfirmUse = $('#hintConfirmUse');
 const memoDialog = $('#memoDialog');
 const memo = $('#memo');
 const resultDialog = $('#resultDialog');
@@ -677,6 +695,7 @@ let tensionTimer = null;
 let lastTensionSecond = null;
 let hintIndex = 0;
 let usedHints = new Set();
+let pendingHintIndex = null;
 let gameActive = false;
 let chainProgress = 0;
 let activeClueIndex = null;
@@ -1339,7 +1358,7 @@ function bigExplosion(){
 function roomFailed(){
   saveFreshRoom(stageIndex);
   gameActive=false;stopBgm();
-  [clueDialog,keypadDialog,memoDialog,hintDialog].forEach(d=>{try{if(d.open)d.close()}catch{}});
+  [clueDialog,keypadDialog,memoDialog,hintDialog,hintConfirmDialog].forEach(d=>{try{if(d.open)d.close()}catch{}});
   resetDangerState();
   bigExplosion();
   resultContent.innerHTML=`<div class="eyebrow">TIME OVER</div><h2>${stageIndex+1}번 방에서 시간이 끝났습니다</h2><p>폭발과 함께 탈출에 실패했습니다.<br>이 방의 제한시간은 ${ROOM_DATA[stageIndex].minutes}분입니다.</p><button id="retryBtn" class="primary-btn">이 방 다시 시작</button>`;
@@ -1388,20 +1407,39 @@ function chargeHintTime(){
   tone(150,.18,.055,'sawtooth');
   return true;
 }
-function selectHint(i){
-  if(isChainStage() && i>chainProgress){showChainToast('현재 연쇄 단서의 힌트만 볼 수 있습니다.');return}
-  if(isChainStage() && i<chainProgress && !usedHints.has(i)){showChainToast('이미 해결한 단서입니다.');return}
+function revealHint(i,already=false){
   const c=ROOM_DATA[stageIndex].clues[i];
-  const already=usedHints.has(i);
-  if(!already){
-    if(!chargeHintTime())return;
-    usedHints.add(i);
-    saveGame();
-    renderHintChoices();
-  }
   hintResult.classList.remove('empty');
   hintResult.innerHTML=`<b>힌트 ${i+1} · ${c.symbol}</b><br>${c.hint}${already?'<br><small style="color:#73d996">이미 구매한 힌트 · 추가 차감 없음</small>':''}`;
   tone(already?520:620,.06,.02,'sine');
+}
+function confirmHintPurchase(i){
+  const c=ROOM_DATA[stageIndex].clues[i];
+  pendingHintIndex=i;
+  hintConfirmLabel.textContent=`힌트 ${i+1} · ${c.symbol} · ${c.title}`;
+  hintConfirmDialog.showModal();
+}
+function selectHint(i){
+  if(isChainStage() && i>chainProgress){showChainToast('현재 연쇄 단서의 힌트만 볼 수 있습니다.');return}
+  if(isChainStage() && i<chainProgress && !usedHints.has(i)){showChainToast('이미 해결한 단서입니다.');return}
+  const already=usedHints.has(i);
+  if(already){revealHint(i,true);return}
+  confirmHintPurchase(i);
+}
+function acceptHintPurchase(){
+  if(pendingHintIndex===null)return;
+  const i=pendingHintIndex;
+  pendingHintIndex=null;
+  try{if(hintConfirmDialog.open)hintConfirmDialog.close()}catch{}
+  if(!chargeHintTime())return;
+  usedHints.add(i);
+  saveGame();
+  renderHintChoices();
+  revealHint(i,false);
+}
+function cancelHintPurchase(){
+  pendingHintIndex=null;
+  try{if(hintConfirmDialog.open)hintConfirmDialog.close()}catch{}
 }
 function useHint(){
   renderHintChoices();
@@ -1443,6 +1481,8 @@ function startGame(resume=false){
 
 startBtn.addEventListener('click',e=>{e.preventDefault();startGame(!!readSave())});
 newGameBtn.addEventListener('click',e=>{e.preventDefault();startGame(false)});
+hintConfirmCancel.addEventListener('click',cancelHintPurchase);
+hintConfirmUse.addEventListener('click',acceptHintPurchase);
 $('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 memo.addEventListener('input',saveGame);
