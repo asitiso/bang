@@ -1253,13 +1253,13 @@ function keyPress(k){
   if(entered.length<4){entered+=k;refreshCode()}
 }
 function roomSolved(){
-  clearInterval(timerId);resetDangerState();tone(660,.11,.05);setTimeout(()=>tone(880,.14,.045),120);keypadDialog.close();
+  clearInterval(timerId);gameActive=false;resetDangerState();tone(660,.11,.05);setTimeout(()=>tone(880,.14,.045),120);keypadDialog.close();
   if(isChainStage()){const exit=$('#exitDoor');if(exit){exit.classList.remove('door-ready');exit.classList.add('door-open')}if(navigator.vibrate)navigator.vibrate([60,40,100])}
   else triggerStandardClearFx();
   const used=ROOM_DATA[stageIndex].minutes*60-remaining;
   if(stageIndex<ROOM_DATA.length-1)saveFreshRoom(stageIndex+1);else clearSave();
   resultContent.innerHTML=`<div class="eyebrow">ROOM CLEAR</div><h2>${stageIndex+1}번 방 탈출</h2><p>남은 시간 <b>${formatTime(remaining)}</b><br>클리어 시간 ${formatTime(used)}</p><button id="nextBtn" class="primary-btn">${stageIndex===ROOM_DATA.length-1?'최종 결과 보기':'다음 방으로'}</button>`;
-  const showResult=()=>{resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}}};
+  const showResult=()=>{resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;gameActive=true;renderRoom()}}};
   if(isChainStage())setTimeout(showResult,760);else setTimeout(showResult,620);
 }
 function explosionSound(){
@@ -1443,7 +1443,6 @@ newGameBtn.addEventListener('click',e=>{e.preventDefault();startGame(false)});
 $('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 memo.addEventListener('input',saveGame);
-viewport.addEventListener('scroll',()=>{if(gameActive)saveGame()},{passive:true});
 window.addEventListener('pagehide',saveGame);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame()});
 
