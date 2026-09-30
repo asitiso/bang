@@ -75,6 +75,99 @@ button{cursor:pointer}
 @media (min-width:900px){.chain-banner{left:72px}}
 
 
+
+/* 1~10: 방별 공간 분위기 + 단서/클리어 반응 */
+.room.standard-stage{--stdGlow:#ffd879}
+.standard-room-fx{position:absolute;z-index:3;inset:0;pointer-events:none;overflow:hidden}
+.standard-room-fx::before,.standard-room-fx::after{content:"";position:absolute;inset:0;pointer-events:none}
+.standard-room-fx .fx-a,.standard-room-fx .fx-b,.standard-room-fx .fx-c,.standard-room-fx .fx-d{position:absolute;display:block;pointer-events:none}
+.standard-stage.fx-clue-hit .standard-room-fx::after{animation:clueShock .62s ease-out}
+.standard-stage.fx-room-clear .standard-room-fx::before{animation:roomClearWash .9s ease-out}
+.standard-stage.fx-room-clear .room-title{animation:titleClear .7s ease-out}
+.standard-stage.fx-room-clear .door{box-shadow:0 0 0 2px rgba(126,242,154,.5),0 0 50px rgba(126,242,154,.25),0 20px 55px rgba(0,0,0,.55),inset 0 0 0 4px rgba(255,255,255,.035)}
+.standard-room-fx::after{background:radial-gradient(circle 150px at var(--fx-x,50%) var(--fx-y,50%),color-mix(in srgb,var(--stdGlow) 38%,transparent),transparent 72%);opacity:0}
+
+/* 1 기억의 서재: 따뜻한 먼지와 오래된 램프 */
+.standard-stage-1{--stdGlow:#ffc86c}
+.standard-stage-1 .standard-room-fx::before{background:
+  radial-gradient(circle at 34% 31%,rgba(255,209,126,.16),transparent 10%),
+  radial-gradient(circle at 35% 31%,rgba(255,189,81,.08),transparent 24%);animation:lampBreath 3.8s ease-in-out infinite alternate}
+.standard-stage-1 .fx-a{left:180px;top:170px;width:8px;height:8px;border-radius:50%;background:#ffd990;box-shadow:120px 84px 0 -2px #f7c679,260px -36px 0 -3px #ffdc9f,420px 70px 0 -2px #eebd70,610px -20px 0 -3px #ffe0a8,820px 115px 0 -2px #e4ac5f,1040px 25px 0 -3px #ffdda0,1220px 150px 0 -2px #f0bd72;opacity:.42;animation:dustDrift 8s linear infinite}
+
+/* 2 뒤집힌 화실: 거울광 */
+.standard-stage-2{--stdGlow:#9ddcff}
+.standard-stage-2 .standard-room-fx::before{left:-35%;width:40%;background:linear-gradient(105deg,transparent 15%,rgba(202,235,255,.03) 25%,rgba(218,244,255,.2) 48%,rgba(202,235,255,.035) 70%,transparent 85%);transform:skewX(-12deg);animation:mirrorSweep 5.2s ease-in-out infinite}
+.standard-stage-2 .fx-a{left:1280px;top:150px;width:280px;height:350px;border:1px solid rgba(190,230,255,.13);box-shadow:inset 0 0 45px rgba(170,222,255,.08),0 0 30px rgba(120,190,255,.06)}
+
+/* 3 신호실: 붉은 신호 펄스 */
+.standard-stage-3{--stdGlow:#ff6375}
+.standard-stage-3 .standard-room-fx::before{background:repeating-linear-gradient(to bottom,transparent 0 68px,rgba(255,68,88,.035) 69px 70px)}
+.standard-stage-3 .fx-a{left:0;right:0;top:220px;height:2px;background:linear-gradient(90deg,transparent,#ff5067,transparent);box-shadow:0 0 16px #ff3853;animation:signalScan 2.8s linear infinite}
+.standard-stage-3 .fx-b{right:420px;top:125px;width:16px;height:16px;border-radius:50%;background:#4a161d;animation:redBeacon 1.15s ease-in-out infinite alternate}
+
+/* 4 좌표의 방: 청록 격자 스캔 */
+.standard-stage-4{--stdGlow:#8affc7}
+.standard-stage-4 .standard-room-fx::before{background-image:linear-gradient(rgba(130,255,201,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(130,255,201,.035) 1px,transparent 1px);background-size:52px 52px;mask-image:linear-gradient(to bottom,transparent 8%,#000 35%,#000 70%,transparent 92%)}
+.standard-stage-4 .fx-a{left:80px;right:80px;top:0;height:3px;background:linear-gradient(90deg,transparent,#86ffd2,transparent);box-shadow:0 0 22px rgba(110,255,201,.6);animation:gridSweep 3.4s linear infinite}
+
+/* 5 문양 보관실: 금빛 문양 잔상 */
+.standard-stage-5{--stdGlow:#ffe18a}
+.standard-stage-5 .fx-a{left:360px;top:180px;font-size:58px;color:rgba(255,226,135,.11);text-shadow:360px 145px 0 rgba(255,226,135,.09),700px -40px 0 rgba(255,226,135,.08),980px 190px 0 rgba(255,226,135,.08);animation:motifFloat 5s ease-in-out infinite alternate}
+.standard-stage-5 .fx-a::before{content:"✿"}
+.standard-stage-5 .standard-room-fx::before{background:radial-gradient(circle at 55% 38%,rgba(255,213,111,.07),transparent 34%)}
+
+/* 6 전산 기록실: CRT 스캔라인 */
+.standard-stage-6{--stdGlow:#6fa8ff}
+.standard-stage-6 .standard-room-fx::before{background:repeating-linear-gradient(to bottom,rgba(100,160,255,.025) 0 2px,transparent 2px 6px);animation:crtFlicker .16s steps(2) infinite}
+.standard-stage-6 .fx-a{left:0;right:0;top:100px;height:70px;background:linear-gradient(to bottom,transparent,rgba(79,137,255,.07),transparent);animation:dataBand 3.2s linear infinite}
+.standard-stage-6 .fx-b{right:390px;top:470px;color:rgba(116,171,255,.14);font:900 18px ui-monospace,monospace;letter-spacing:.35em;animation:binaryBlink 1.3s steps(2) infinite}
+.standard-stage-6 .fx-b::before{content:"1011 0010 1110"}
+
+/* 7 수학자의 작업실: 분필 수식 잔상 */
+.standard-stage-7{--stdGlow:#e090ff}
+.standard-stage-7 .fx-a{left:300px;top:170px;color:rgba(239,202,255,.1);font:900 44px Georgia,serif;transform:rotate(-7deg);animation:chalkHover 4.4s ease-in-out infinite alternate}
+.standard-stage-7 .fx-a::before{content:"∑  π  √  ∞"}
+.standard-stage-7 .fx-b{left:980px;top:390px;width:120px;height:120px;border:2px dashed rgba(224,144,255,.12);border-radius:50%;animation:mathOrbit 8s linear infinite}
+
+/* 8 암호 인쇄소: 인쇄 롤러/초록 레이저 */
+.standard-stage-8{--stdGlow:#67ffe0}
+.standard-stage-8 .standard-room-fx::before{background:repeating-linear-gradient(90deg,transparent 0 94px,rgba(85,255,226,.026) 95px 96px)}
+.standard-stage-8 .fx-a{left:0;right:0;top:300px;height:4px;background:linear-gradient(90deg,transparent,#58ffd9 20%,#58ffd9 80%,transparent);box-shadow:0 0 20px rgba(80,255,220,.5);animation:printScan 3s ease-in-out infinite}
+.standard-stage-8 .fx-b{left:760px;bottom:105px;width:260px;height:38px;border-radius:22px;background:linear-gradient(#1e2a29,#07100e);box-shadow:inset 0 0 0 4px #263b36}
+
+/* 9 관측소: 별빛과 관측 빔 */
+.standard-stage-9{--stdGlow:#ff9f69}
+.standard-stage-9 .standard-room-fx::before{background-image:radial-gradient(circle,#fff 0 1px,transparent 1.5px),radial-gradient(circle,#ffd6b7 0 1px,transparent 1.5px);background-size:140px 120px,190px 165px;background-position:20px 40px,90px 20px;opacity:.14;animation:starTwinkle 2.2s ease-in-out infinite alternate}
+.standard-stage-9 .fx-a{right:250px;top:70px;width:4px;height:520px;background:linear-gradient(to bottom,rgba(255,163,103,.38),transparent);transform:rotate(28deg);transform-origin:top;filter:blur(1px);animation:telescopeBeam 4.8s ease-in-out infinite alternate}
+
+/* 10 제로 룸: 붉은 코어 경고 */
+.standard-stage-10{--stdGlow:#ff496a}
+.standard-stage-10 .standard-room-fx::before{background:radial-gradient(circle at 52% 45%,rgba(255,43,82,.12),transparent 16%,rgba(255,43,82,.045) 17%,transparent 29%);animation:corePulse 1.7s ease-in-out infinite alternate}
+.standard-stage-10 .fx-a{left:890px;top:270px;width:180px;height:180px;border:3px solid rgba(255,70,100,.14);border-radius:50%;box-shadow:inset 0 0 0 28px rgba(255,70,100,.025),0 0 25px rgba(255,40,75,.09);animation:coreSpin 7s linear infinite}
+.standard-stage-10 .fx-b{left:760px;right:560px;top:98px;height:3px;background:#6d1725;box-shadow:0 0 10px rgba(255,50,80,.3);animation:warningBlink .8s steps(2) infinite}
+
+@keyframes clueShock{0%{opacity:0;transform:scale(.72)}35%{opacity:.9}100%{opacity:0;transform:scale(1.38)}}
+@keyframes roomClearWash{0%{opacity:0;background:radial-gradient(circle at 82% 45%,rgba(126,242,154,.55),transparent 12%)}35%{opacity:1}100%{opacity:0;background:radial-gradient(circle at 82% 45%,rgba(126,242,154,.08),transparent 52%)}}
+@keyframes titleClear{0%{letter-spacing:0}45%{letter-spacing:.09em;text-shadow:0 0 22px var(--stdGlow)}100%{letter-spacing:0}}
+@keyframes lampBreath{from{opacity:.7}to{opacity:1}}
+@keyframes dustDrift{0%{transform:translate(0,0)}50%{transform:translate(45px,30px)}100%{transform:translate(90px,-15px)}}
+@keyframes mirrorSweep{0%,18%{transform:translateX(-20%) skewX(-12deg);opacity:0}45%{opacity:1}78%,100%{transform:translateX(350%) skewX(-12deg);opacity:0}}
+@keyframes signalScan{from{transform:translateY(-130px)}to{transform:translateY(520px)}}
+@keyframes redBeacon{from{box-shadow:0 0 4px #ff314d;background:#761d2a}to{box-shadow:0 0 28px #ff314d;background:#ff4962}}
+@keyframes gridSweep{from{transform:translateY(90px)}to{transform:translateY(650px)}}
+@keyframes motifFloat{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(28px) rotate(3deg)}}
+@keyframes crtFlicker{50%{opacity:.78}}
+@keyframes dataBand{from{transform:translateY(-180px)}to{transform:translateY(580px)}}
+@keyframes binaryBlink{50%{opacity:.35}}
+@keyframes chalkHover{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(20px) rotate(-4deg)}}
+@keyframes mathOrbit{to{transform:rotate(360deg)}}
+@keyframes printScan{0%,100%{transform:translateY(-140px);opacity:0}40%,60%{opacity:.8}50%{transform:translateY(300px)}}
+@keyframes starTwinkle{from{opacity:.08}to{opacity:.2}}
+@keyframes telescopeBeam{from{opacity:.12;transform:rotate(24deg)}to{opacity:.34;transform:rotate(32deg)}}
+@keyframes corePulse{from{opacity:.45}to{opacity:1}}
+@keyframes coreSpin{to{transform:rotate(360deg)}}
+@keyframes warningBlink{50%{opacity:.18}}
+
 /* 11~15: 공간 자체가 변하는 연쇄 장치 연출 */
 .room.chain-stage{--chainGlow:#ffd879}
 .chain-room-fx{position:absolute;z-index:4;inset:0;pointer-events:none;overflow:hidden}
@@ -489,6 +582,30 @@ function cluePosition(i){
     {l:160,t:260,r:'-2deg'},{l:650,t:390,r:'1.5deg'},{l:1080,t:210,r:'-1deg'},{l:1390,t:430,r:'2deg'}
   ];return positions[i];
 }
+function standardFxMarkup(){
+  if(isChainStage())return '';
+  return '<div class="standard-room-fx"><i class="fx-a"></i><i class="fx-b"></i><i class="fx-c"></i><i class="fx-d"></i></div>';
+}
+function standardFxPoint(i){
+  const pts=[['14%','47%'],['39%','62%'],['65%','39%'],['83%','67%']];
+  return pts[i]||['50%','50%'];
+}
+function triggerStandardClueFx(i){
+  if(isChainStage())return;
+  const p=standardFxPoint(i);
+  roomEl.style.setProperty('--fx-x',p[0]);roomEl.style.setProperty('--fx-y',p[1]);
+  roomEl.classList.remove('fx-clue-hit');void roomEl.offsetWidth;roomEl.classList.add('fx-clue-hit');
+  setTimeout(()=>roomEl.classList.remove('fx-clue-hit'),680);
+  const freqs=[420,510,590,680,470,720,540,630,760,360];
+  tone(freqs[stageIndex]||480,.07,.025,stageIndex===2||stageIndex===9?'square':'sine');
+  if(navigator.vibrate)navigator.vibrate(18);
+}
+function triggerStandardClearFx(){
+  if(isChainStage())return;
+  roomEl.classList.remove('fx-room-clear');void roomEl.offsetWidth;roomEl.classList.add('fx-room-clear');
+  const exit=$('#exitDoor');if(exit)exit.classList.add('door-open');
+  if(navigator.vibrate)navigator.vibrate([35,25,65]);
+}
 function isChainStage(){return stageIndex>=10}
 function chainStageNumber(){return stageIndex+1}
 function chainCoverType(){
@@ -547,11 +664,12 @@ function renderRoom(){
   const d=ROOM_DATA[stageIndex];
   chainProgress=0;activeClueIndex=null;
   stageNoEl.textContent=`ROOM ${String(stageIndex+1).padStart(2,'0')}`;stageNameEl.textContent=d.name;buildProgress();
-  roomEl.className=`room room-theme-${d.theme}${isChainStage()?` chain-stage chain-stage-${chainStageNumber()} chain-progress-0`:''}`;
+  roomEl.className=`room room-theme-${d.theme}${isChainStage()?` chain-stage chain-stage-${chainStageNumber()} chain-progress-0`:` standard-stage standard-stage-${stageIndex+1}`}`;
   roomEl.innerHTML=`
     <div class="wall-label">ROOM ${String(stageIndex+1).padStart(2,'0')} / ${d.order}</div>
     <div class="room-title">${d.name}</div>
     ${isChainStage()?'<div class="chain-banner">⛓ 앞 단서를 풀면 방 안의 다음 장치가 실제로 열립니다 <b id="chainStatus">0/4</b></div>':''}
+    ${standardFxMarkup()}
     ${chainFxMarkup()}
     <div class="prop lamp"></div><div class="prop desk"></div><div class="prop shelf"></div><div class="prop window"></div>
     ${d.clues.map((c,i)=>{const p=cluePosition(i);const chainClass=isChainStage()?(i===0?' chain-current':' chain-locked'):'';const device=isChainStage()?`<span class="device-frame"><span class="device-cover ${chainCoverType()}"><strong>${chainCoverLabel(i)}</strong></span></span>`:'';return `<button class="clue${chainClass}" data-clue="${i}" style="left:${p.l}px;top:${p.t}px;--r:${p.r}" ${isChainStage()&&i>0?'disabled':''}>${device}<div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
@@ -587,6 +705,7 @@ function openClue(i){
   if(isChainStage() && i>chainProgress){showChainToast('앞 단서를 먼저 해결해야 합니다.');return}
   const c=ROOM_DATA[stageIndex].clues[i];
   activeClueIndex=i;
+  triggerStandardClueFx(i);
   let chainPanel='';
   if(isChainStage()){
     if(i<chainProgress){
@@ -622,10 +741,11 @@ function keyPress(k){createAudio();tone(300+Math.random()*120,.035,.012,'square'
 function roomSolved(){
   clearInterval(timerId);tone(660,.11,.05);setTimeout(()=>tone(880,.14,.045),120);keypadDialog.close();
   if(isChainStage()){const exit=$('#exitDoor');if(exit){exit.classList.remove('door-ready');exit.classList.add('door-open')}if(navigator.vibrate)navigator.vibrate([60,40,100])}
+  else triggerStandardClearFx();
   const used=ROOM_DATA[stageIndex].minutes*60-remaining;
   resultContent.innerHTML=`<div class="eyebrow">ROOM CLEAR</div><h2>${stageIndex+1}번 방 탈출</h2><p>남은 시간 <b>${formatTime(remaining)}</b><br>클리어 시간 ${formatTime(used)}</p><button id="nextBtn" class="primary-btn">${stageIndex===ROOM_DATA.length-1?'최종 결과 보기':'다음 방으로'}</button>`;
   const showResult=()=>{resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}}};
-  if(isChainStage())setTimeout(showResult,760);else showResult();
+  if(isChainStage())setTimeout(showResult,760);else setTimeout(showResult,620);
 }
 function roomFailed(){
   gameActive=false;tone(110,.55,.07,'sawtooth');
