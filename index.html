@@ -529,6 +529,12 @@ let remaining = 0;
 let timerId = null;
 let entered = '';
 let audioCtx = null;
+let sfxBus = null;
+let bgmBus = null;
+let bgmFilter = null;
+let bgmNodes = [];
+let bgmMotifTimer = null;
+let bgmNoiseBuffer = null;
 let tensionTimer = null;
 let lastTensionSecond = null;
 let hintIndex = 0;
@@ -537,14 +543,142 @@ let chainProgress = 0;
 let activeClueIndex = null;
 
 function createAudio(){
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    sfxBus=audioCtx.createGain();
+    sfxBus.gain.value=.82;
+    sfxBus.connect(audioCtx.destination);
+
+    bgmBus=audioCtx.createGain();
+    bgmBus.gain.value=.018;
+    bgmFilter=audioCtx.createBiquadFilter();
+    bgmFilter.type='lowpass';
+    bgmFilter.frequency.value=1450;
+    bgmFilter.Q.value=.35;
+    bgmBus.connect(bgmFilter);
+    bgmFilter.connect(audioCtx.destination);
+  }
+  if(audioCtx.state==='suspended') audioCtx.resume();
 }
 function tone(freq=440,dur=.08,vol=.03,type='sine'){
   if(!audioCtx) return;
   const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-  o.type=type;o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);
-  const t=audioCtx.currentTime;o.start(t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.stop(t+dur);
+  o.type=type;o.frequency.value=freq;g.gain.value=vol;
+  o.connect(g);g.connect(sfxBus||audioCtx.destination);
+  const t=audioCtx.currentTime;
+  o.start(t);
+  g.gain.setValueAtTime(Math.max(.0001,vol),t);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.stop(t+dur+.02);
+}
+function dualTone(f1,f2,dur=.09,vol=.024){
+  if(!audioCtx)return;
+  const t=audioCtx.currentTime;
+  [f1,f2].forEach((f,idx)=>{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(vol*(idx?0.86:1),t);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(sfxBus||audioCtx.destination);
+    o.start(t);o.stop(t+dur+.02);
+  });
+}
+function keypadTone(k){
+  createAudio();
+  const rows={1:697,2:697,3:697,4:770,5:770,6:770,7:852,8:852,9:852,0:941,C:941,'↵':941};
+  const cols={1:1209,4:1209,7:1209,C:1209,2:1336,5:1336,8:1336,0:1336,3:1477,6:1477,9:1477,'↵':1477};
+  dualTone(rows[k]||770,cols[k]||1336,k==='↵'?.13:.085,k==='↵'?.03:.022);
+  if(navigator.vibrate)navigator.vibrate(k==='↵'?22:10);
+}
+function buildNoiseBuffer(){
+  if(!audioCtx||bgmNoiseBuffer)return bgmNoiseBuffer;
+  const length=audioCtx.sampleRate*2;
+  const b=audioCtx.createBuffer(1,length,audioCtx.sampleRate);
+  const d=b.getChannelData(0);
+  for(let i=0;i<length;i++){
+    const envelope=.55+.45*Math.sin(i/length*Math.PI*2);
+    d[i]=(Math.random()*2-1)*envelope;
+  }
+  bgmNoiseBuffer=b;
+  return b;
+}
+function bgmNote(freq,delay=0,dur=1.25,vol=.016){
+  if(!audioCtx||!bgmBus)return;
+  const t=audioCtx.currentTime+delay;
+  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.type='sine';o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+.08);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(bgmBus);
+  o.start(t);o.stop(t+dur+.05);
+}
+function stopBgm(){
+  if(bgmMotifTimer){clearInterval(bgmMotifTimer);bgmMotifTimer=null}
+  bgmNodes.forEach(n=>{try{if(n.gain)n.gain.cancelScheduledValues(audioCtx.currentTime)}catch{}try{n.stop&&n.stop()}catch{}try{n.disconnect&&n.disconnect()}catch{}});
+  bgmNodes=[];
+}
+function startBgmForRoom(){
+  if(!audioCtx||!bgmBus)return;
+  stopBgm();
+
+  const roots=[55,58.27,61.74,65.41,69.30,73.42,77.78,82.41,87.31,92.50,49,52,55,58.27,61.74];
+  const root=roots[stageIndex%roots.length];
+  const minor=[1,1.1892,1.4983,2];
+  const bright=[1,1.2599,1.4983,2];
+  const ratios=(stageIndex===3||stageIndex===7)?bright:minor;
+
+  ratios.forEach((r,i)=>{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=i===0?'sine':i===1?'triangle':'sine';
+    o.frequency.value=root*r;
+    o.detune.value=(i-1.5)*(stageIndex%2?2.5:-2.5);
+    g.gain.value=i===0?.34:i===1?.18:.11;
+    o.connect(g);g.connect(bgmBus);
+    o.start();
+    bgmNodes.push(o,g);
+  });
+
+  const noise=audioCtx.createBufferSource();
+  noise.buffer=buildNoiseBuffer();noise.loop=true;
+  const ng=audioCtx.createGain(),nf=audioCtx.createBiquadFilter();
+  nf.type='bandpass';nf.frequency.value=stageIndex>=10?240:420;nf.Q.value=.7;
+  ng.gain.value=stageIndex>=10?.055:.035;
+  noise.connect(nf);nf.connect(ng);ng.connect(bgmBus);noise.start();
+  bgmNodes.push(noise,ng,nf);
+
+  const lfo=audioCtx.createOscillator(),lfoGain=audioCtx.createGain();
+  lfo.type='sine';lfo.frequency.value=.055+(stageIndex%4)*.012;
+  lfoGain.gain.value=stageIndex>=10?320:210;
+  lfo.connect(lfoGain);lfoGain.connect(bgmFilter.frequency);lfo.start();
+  bgmNodes.push(lfo,lfoGain);
+
+  const motifScales=[
+    [1,1.1892,1.4983,2],[1,1.1225,1.4983,1.7818],[1,1.1892,1.3348,1.7818],
+    [1,1.2599,1.4983,2],[1,1.1892,1.5874,2],[1,1.1225,1.3348,1.6818],
+    [1,1.1892,1.4983,1.8877],[1,1.2599,1.5874,2],[1,1.1225,1.4983,1.7818],
+    [1,1.1892,1.4142,1.7818],[1,1.1225,1.3348,1.6818],[1,1.1892,1.4983,1.7818],
+    [1,1.1225,1.4142,1.6818],[1,1.1892,1.4983,1.8877],[1,1.1225,1.3348,2]
+  ];
+  const scale=motifScales[stageIndex%motifScales.length];
+  let step=0;
+  const playMotif=()=>{
+    if(!gameActive||!audioCtx||!bgmBus)return;
+    const base=root*4;
+    const pattern=[0,2,1,3,2,0];
+    for(let j=0;j<3;j++){
+      const idx=pattern[(step+j)%pattern.length];
+      bgmNote(base*scale[idx],j*.42,.72,stageIndex>=10?.011:.009);
+    }
+    step=(step+1)%pattern.length;
+  };
+  playMotif();
+  bgmMotifTimer=setInterval(playMotif,stageIndex>=10?4800:6200);
+}
+function setBgmUrgency(){
+  if(!audioCtx||!bgmBus)return;
+  const target=remaining<=10?.009:remaining<=30?.011:remaining<=60?.014:.018;
+  bgmBus.gain.setTargetAtTime(target,audioCtx.currentTime,.35);
 }
 function tensionPulse(){
   if(!gameActive || remaining>60 || remaining<=0 || lastTensionSecond===remaining) return;
@@ -560,6 +694,7 @@ function updateTimer(){
   timerEl.textContent=formatTime(remaining);
   timerEl.classList.toggle('warning',remaining<=60&&remaining>30);
   timerEl.classList.toggle('danger',remaining<=30);
+  setBgmUrgency();
   tensionPulse();
 }
 function startRoomTimer(){
@@ -681,6 +816,7 @@ function renderRoom(){
   viewport.scrollLeft=0;hintIndex=0;entered='';memo.value='';
   updateChainLocks();
   startRoomTimer();
+  startBgmForRoom();
 }
 function submitChainAnswer(i){
   if(!isChainStage() || i!==chainProgress) return;
@@ -729,7 +865,7 @@ function buildKeypad(){
 }
 function openKeypad(){if(isChainStage()&&chainProgress<4){showChainToast(`연쇄 장치를 먼저 해제하세요 · ${chainProgress}/4`);tone(140,.12,.035,'sawtooth');return}entered='';codeMessage.textContent=isChainStage()?'해제한 네 숫자를 순서대로 입력하세요':'네 자리 암호를 입력하세요';refreshCode();keypadDialog.showModal();tone(520,.07,.025)}
 function refreshCode(){codeDisplay.textContent=(entered+'····').slice(0,4)}
-function keyPress(k){createAudio();tone(300+Math.random()*120,.035,.012,'square');
+function keyPress(k){createAudio();keypadTone(k);
   if(k==='C'){entered='';refreshCode();return}
   if(k==='↵'){
     if(entered.length!==4){codeMessage.textContent='네 자리를 모두 입력하세요.';return}
@@ -748,12 +884,12 @@ function roomSolved(){
   if(isChainStage())setTimeout(showResult,760);else setTimeout(showResult,620);
 }
 function roomFailed(){
-  gameActive=false;tone(110,.55,.07,'sawtooth');
+  gameActive=false;stopBgm();tone(110,.55,.07,'sawtooth');
   resultContent.innerHTML=`<div class="eyebrow">TIME OVER</div><h2>${stageIndex+1}번 방에서 시간이 끝났습니다</h2><p>이 방의 제한시간은 ${ROOM_DATA[stageIndex].minutes}분입니다. 같은 방부터 다시 도전할 수 있습니다.</p><button id="retryBtn" class="primary-btn">이 방 다시 시작</button>`;
   resultDialog.showModal();$('#retryBtn').onclick=()=>{resultDialog.close();gameActive=true;renderRoom()};
 }
 function finishGame(){
-  clearInterval(timerId);gameActive=false;
+  clearInterval(timerId);gameActive=false;stopBgm();
   resultContent.innerHTML=`<div class="eyebrow">ESCAPE COMPLETE</div><h2>15개의 방을 모두 탈출했습니다</h2><p>관찰, 암호, 수학, 방향, 논리를 모두 통과했습니다.</p><button id="restartBtn" class="primary-btn">처음부터 다시</button>`;
   resultDialog.showModal();$('#restartBtn').onclick=()=>location.reload();
 }
