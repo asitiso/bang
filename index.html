@@ -74,6 +74,105 @@ button{cursor:pointer}
 @keyframes chainToast{0%{opacity:0;transform:translate(-50%,-8px)}12%,78%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-12px)}}
 @media (min-width:900px){.chain-banner{left:72px}}
 
+
+/* 11~15: 공간 자체가 변하는 연쇄 장치 연출 */
+.room.chain-stage{--chainGlow:#ffd879}
+.chain-room-fx{position:absolute;z-index:4;inset:0;pointer-events:none;overflow:hidden}
+.chain-conduit{position:absolute;left:250px;right:330px;top:236px;height:5px;border-radius:999px;background:#111820;box-shadow:0 0 0 1px rgba(255,255,255,.06);overflow:hidden}
+.chain-conduit::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,var(--chainGlow),transparent);transform:translateX(-105%);opacity:0}
+.chain-stage.chain-progress-1 .chain-conduit::after,
+.chain-stage.chain-progress-2 .chain-conduit::after,
+.chain-stage.chain-progress-3 .chain-conduit::after,
+.chain-stage.chain-progress-4 .chain-conduit::after{opacity:.75;animation:powerTravel 1.6s linear infinite}
+.chain-node{position:absolute;top:219px;width:38px;height:38px;border-radius:50%;border:3px solid #27313b;background:#0a0e12;box-shadow:0 0 0 5px rgba(0,0,0,.22),inset 0 0 16px #000;transition:.55s ease}
+.chain-node::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#313943;transition:.45s ease}
+.chain-node.n1{left:245px}.chain-node.n2{left:738px}.chain-node.n3{left:1168px}.chain-node.n4{left:1480px}
+.chain-stage.chain-progress-1 .n1::after,
+.chain-stage.chain-progress-2 .n1::after,
+.chain-stage.chain-progress-3 .n1::after,
+.chain-stage.chain-progress-4 .n1::after,
+.chain-stage.chain-progress-2 .n2::after,
+.chain-stage.chain-progress-3 .n2::after,
+.chain-stage.chain-progress-4 .n2::after,
+.chain-stage.chain-progress-3 .n3::after,
+.chain-stage.chain-progress-4 .n3::after,
+.chain-stage.chain-progress-4 .n4::after{background:var(--chainGlow);box-shadow:0 0 16px var(--chainGlow),0 0 34px color-mix(in srgb,var(--chainGlow) 55%,transparent)}
+.chain-stage.chain-progress-1 .n1,
+.chain-stage.chain-progress-2 .n1,.chain-stage.chain-progress-2 .n2,
+.chain-stage.chain-progress-3 .n1,.chain-stage.chain-progress-3 .n2,.chain-stage.chain-progress-3 .n3,
+.chain-stage.chain-progress-4 .chain-node{border-color:color-mix(in srgb,var(--chainGlow) 70%,#27313b)}
+.chain-ceiling-light{position:absolute;top:82px;width:180px;height:18px;border-radius:50%;background:#171b20;box-shadow:0 8px 22px rgba(0,0,0,.5);transition:.6s ease}
+.chain-ceiling-light::after{content:"";position:absolute;left:-80px;right:-80px;top:12px;height:250px;clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);background:linear-gradient(to bottom,color-mix(in srgb,var(--chainGlow) 22%,transparent),transparent 78%);opacity:0;transition:.65s ease}
+.chain-ceiling-light.l1{left:550px}.chain-ceiling-light.l2{left:1210px}
+.chain-stage.chain-progress-1 .l1,.chain-stage.chain-progress-2 .l1,.chain-stage.chain-progress-3 .l1,.chain-stage.chain-progress-4 .l1,
+.chain-stage.chain-progress-3 .l2,.chain-stage.chain-progress-4 .l2{background:var(--chainGlow);box-shadow:0 0 28px color-mix(in srgb,var(--chainGlow) 75%,transparent)}
+.chain-stage.chain-progress-1 .l1::after,.chain-stage.chain-progress-2 .l1::after,.chain-stage.chain-progress-3 .l1::after,.chain-stage.chain-progress-4 .l1::after,
+.chain-stage.chain-progress-3 .l2::after,.chain-stage.chain-progress-4 .l2::after{opacity:1}
+.chain-status-panel{position:absolute;right:395px;top:300px;width:170px;padding:12px;border-radius:9px;background:#0a0f14;border:2px solid #252f38;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.chain-status-panel b{display:block;color:#75818d;font:900 11px ui-monospace,monospace;letter-spacing:.16em;margin-bottom:8px}
+.chain-status-panel i{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:7px;background:#3a2227;border:1px solid #6c343c;transition:.45s}
+.chain-stage.chain-progress-1 .chain-status-panel i:nth-of-type(1),
+.chain-stage.chain-progress-2 .chain-status-panel i:nth-of-type(-n+2),
+.chain-stage.chain-progress-3 .chain-status-panel i:nth-of-type(-n+3),
+.chain-stage.chain-progress-4 .chain-status-panel i{background:#5cff91;border-color:#90ffb3;box-shadow:0 0 12px #5cff91}
+.chain-stage.chain-progress-4 .chain-status-panel{border-color:#4ecb76;box-shadow:0 0 28px rgba(79,239,127,.16),0 14px 30px rgba(0,0,0,.35)}
+.chain-stage.chain-progress-4 .door{box-shadow:0 0 0 2px rgba(93,255,143,.45),0 0 45px rgba(79,239,127,.22),0 20px 55px rgba(0,0,0,.55),inset 0 0 0 4px rgba(255,255,255,.035)}
+.chain-stage.chain-progress-4 .keypad-preview .slots{color:#9cffb8;box-shadow:inset 0 0 16px rgba(90,255,140,.15),0 0 18px rgba(90,255,140,.14)}
+.chain-stage.chain-progress-4 .door-cta{background:rgba(19,66,36,.8);color:#b8ffcb}
+.chain-stage .clue{overflow:visible}
+.chain-stage .clue > .tag,.chain-stage .clue > h3,.chain-stage .clue > .clue-art{transition:opacity .55s ease,filter .55s ease,transform .55s ease}
+.chain-stage .clue.chain-locked > .tag,
+.chain-stage .clue.chain-locked > h3,
+.chain-stage .clue.chain-locked > .clue-art{opacity:.02;filter:blur(9px);transform:scale(.96)}
+.device-frame{position:absolute;inset:-13px;z-index:7;border-radius:16px;pointer-events:none;perspective:900px}
+.device-frame::before{content:"";position:absolute;inset:0;border-radius:16px;border:3px solid #242b31;box-shadow:0 18px 42px rgba(0,0,0,.48),inset 0 0 28px rgba(0,0,0,.45);pointer-events:none}
+.device-cover{position:absolute;z-index:9;inset:0;border-radius:13px;display:grid;place-items:center;overflow:hidden;transform-origin:center;transition:opacity .25s ease;pointer-events:none}
+.device-cover strong{position:relative;z-index:4;padding:8px 11px;border-radius:8px;background:rgba(4,7,9,.78);border:1px solid rgba(255,255,255,.13);color:#e5e9ed;font:900 11px ui-monospace,monospace;letter-spacing:.12em;text-align:center;box-shadow:0 7px 20px rgba(0,0,0,.35)}
+.device-cover::before,.device-cover::after{content:"";position:absolute;transition:transform .85s cubic-bezier(.18,.74,.18,1),opacity .7s ease}
+.chain-current .device-cover{animation:deviceFade .9s .12s forwards}
+.chain-solved .device-cover{opacity:0}
+.chain-locked .device-cover{opacity:1}
+.device-cover.cabinet{background:#33271f}
+.device-cover.cabinet::before,.device-cover.cabinet::after{top:0;bottom:0;width:51%;background:linear-gradient(90deg,#3d2d23,#6a4d38,#34261e);border:3px solid #241a15;box-shadow:inset 0 0 0 2px rgba(255,255,255,.035)}
+.device-cover.cabinet::before{left:0;transform-origin:left}.device-cover.cabinet::after{right:0;transform-origin:right}
+.chain-current .device-cover.cabinet::before{transform:rotateY(-102deg)}
+.chain-current .device-cover.cabinet::after{transform:rotateY(102deg)}
+.device-cover.film{background:#170609}
+.device-cover.film::before{inset:0;background:repeating-linear-gradient(90deg,#130407 0 24px,#70202c 25px 27px,#130407 28px 52px);box-shadow:inset 0 0 45px #000}
+.device-cover.film::after{left:0;right:0;top:50%;height:3px;background:#ff4961;box-shadow:0 0 20px #ff354f}
+.chain-current .device-cover.film::before{transform:translateY(-112%)}
+.chain-current .device-cover.film::after{transform:translateY(140px);opacity:0}
+.device-cover.engine{background:linear-gradient(145deg,#252a2d,#111518);border:4px ridge #3a4246}
+.device-cover.engine::before{inset:22px;border-radius:50%;background:repeating-conic-gradient(#596269 0 12deg,#1a1f22 13deg 25deg);box-shadow:inset 0 0 0 24px #171c1f,inset 0 0 0 27px #535b60}
+.device-cover.engine::after{width:88px;height:20px;border-radius:3px;background:#78242c;border:2px solid #a74550;box-shadow:0 0 15px rgba(255,56,77,.25)}
+.chain-current .device-cover.engine::before{transform:rotate(210deg) scale(.3);opacity:0}
+.chain-current .device-cover.engine::after{transform:translateY(120px);opacity:0}
+.device-cover.mirror{background:linear-gradient(135deg,#78818c,#dbe0e5 38%,#626b74 39%,#b9c2ca 62%,#59616a);border:3px solid #303942}
+.device-cover.mirror::before{inset:-30%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.7) 47%,transparent 58%);transform:translateX(-70%)}
+.device-cover.mirror::after{inset:0;background:linear-gradient(60deg,transparent 48%,rgba(30,38,45,.65) 49% 51%,transparent 52%),linear-gradient(-60deg,transparent 48%,rgba(30,38,45,.5) 49% 51%,transparent 52%)}
+.chain-current .device-cover.mirror::before{transform:translateX(78%)}
+.chain-current .device-cover.mirror::after{transform:scale(1.8);opacity:0}
+.device-cover.core{background:radial-gradient(circle,#16242a,#070b0e 66%);border:3px solid #263b43}
+.device-cover.core::before{width:170px;height:170px;border-radius:50%;background:repeating-conic-gradient(from 8deg,#263d46 0 16deg,#0c1519 17deg 29deg);box-shadow:inset 0 0 0 34px #071014,inset 0 0 0 38px #3f5b64,0 0 28px rgba(80,228,255,.12)}
+.device-cover.core::after{width:74px;height:74px;border-radius:50%;background:#0e252d;border:3px solid #4b7885;box-shadow:0 0 20px rgba(87,230,255,.18)}
+.chain-current .device-cover.core::before{transform:rotate(155deg) scale(1.35);opacity:0}
+.chain-current .device-cover.core::after{transform:scale(.15);opacity:0}
+.chain-stage-11{--chainGlow:#ffc46b}
+.chain-stage-12{--chainGlow:#ff536c}
+.chain-stage-13{--chainGlow:#a9ff78}
+.chain-stage-14{--chainGlow:#b7d9ff}
+.chain-stage-15{--chainGlow:#62e9ff}
+.chain-stage-12 .room-title{text-shadow:0 0 18px rgba(255,58,84,.25),0 7px 25px rgba(0,0,0,.5)}
+.chain-stage-13 .chain-room-fx{filter:hue-rotate(30deg)}
+.chain-stage-14 .chain-room-fx{opacity:.88}
+.chain-stage-15.chain-progress-4::before{background:radial-gradient(circle at 84% 45%,rgba(67,255,195,.12),transparent 22%),linear-gradient(to bottom,rgba(0,0,0,.02),rgba(0,0,0,.12) 62%,rgba(0,0,0,.52))}
+.exit-zone.door-ready{animation:doorReady 1s ease-in-out infinite alternate}
+.exit-zone.door-open .door{transform-origin:left center;animation:doorSwing .9s cubic-bezier(.2,.75,.18,1) forwards}
+@keyframes powerTravel{to{transform:translateX(105%)}}
+@keyframes deviceFade{0%,62%{opacity:1}100%{opacity:0}}
+@keyframes doorReady{from{filter:brightness(1)}to{filter:brightness(1.13)}}
+@keyframes doorSwing{0%{transform:perspective(1000px) rotateY(0)}100%{transform:perspective(1000px) rotateY(-72deg)}}
+
 .bottom-hud{position:fixed;z-index:50;left:0;right:0;bottom:0;padding:8px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;background:linear-gradient(to top,rgba(4,7,10,.97),rgba(4,7,10,.65),transparent)}.swipe-tip{flex:1;min-width:0;font-size:11px;color:#d2d8de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint-btn{flex:none;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:#151d27;color:white;padding:10px 12px;font-weight:800}.hint-btn span{font-size:10px;color:#ffbd75;margin-left:4px}
 
 .modal{width:min(92vw,480px);border:1px solid rgba(255,255,255,.13);border-radius:22px;background:#111821;color:white;box-shadow:var(--shadow);padding:22px}.modal::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}.close-btn{position:absolute;right:10px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:#222c37;color:#fff;font-size:22px}.detail-card{padding-top:18px}.detail-card h2{margin:0 0 8px}.detail-art{min-height:210px;border-radius:16px;margin:18px 0;display:grid;place-items:center;background:#e9e3d6;color:#141414;padding:16px}.detail-note{line-height:1.6;color:#b9c3cc}.keypad-modal{width:min(90vw,390px)}.keypad-head{padding-top:12px;text-align:center}.door-mark{font-size:10px;letter-spacing:.22em;color:#8e9aa6}.code-display{margin:16px auto 8px;width:220px;padding:14px;background:#050708;border-radius:10px;color:#79ffad;font:900 32px monospace;letter-spacing:.18em}.code-message{min-height:22px;color:#9da9b4;font-size:13px}.keypad{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.keypad button{height:58px;border:1px solid #39424d;border-radius:13px;background:#202936;color:#fff;font-size:20px;font-weight:900}.keypad button:active{background:#334153}.keypad .enter{background:#704f1f;border-color:#a87a33;color:#ffe9b3}.keypad .clear{color:#ff8493}.memo-modal textarea{width:100%;height:45vh;resize:none;border-radius:14px;border:1px solid #34404c;background:#0b1118;color:#fff;padding:14px;line-height:1.55;outline:none}.result-modal{text-align:center}.result-modal h2{font-size:30px;margin:4px 0 10px}.result-modal p{color:#b6c0c9;line-height:1.6}.result-modal button{margin-top:12px}
@@ -391,6 +490,29 @@ function cluePosition(i){
   ];return positions[i];
 }
 function isChainStage(){return stageIndex>=10}
+function chainStageNumber(){return stageIndex+1}
+function chainCoverType(){
+  return ['cabinet','film','engine','mirror','core'][Math.max(0,Math.min(4,stageIndex-10))] || 'cabinet';
+}
+function chainCoverLabel(i){
+  const labels={
+    10:['ARCHIVE OPEN','CABINET LOCKED','DRAWER LOCKED','FINAL BOX SEALED'],
+    11:['FILM READY','DARKROOM SEALED','DEVELOPER LOCKED','ENLARGER SEALED'],
+    12:['POWER ONLINE','TURBINE LOCKED','CONTROL LOCKED','RAIL LOCKED'],
+    13:['MIRROR I','MIRROR II SEALED','MIRROR III SEALED','MIRROR IV SEALED'],
+    14:['SEED ONLINE','DIAL OFFLINE','GRID OFFLINE','CORE SEALED']
+  };
+  return (labels[stageIndex]||labels[10])[i];
+}
+function chainFxMarkup(){
+  if(!isChainStage())return '';
+  return `<div class="chain-room-fx">
+    <div class="chain-conduit"></div>
+    <i class="chain-node n1"></i><i class="chain-node n2"></i><i class="chain-node n3"></i><i class="chain-node n4"></i>
+    <i class="chain-ceiling-light l1"></i><i class="chain-ceiling-light l2"></i>
+    <div class="chain-status-panel"><b>SEQUENCE</b><i></i><i></i><i></i><i></i></div>
+  </div>`;
+}
 function showChainToast(text){
   const old=document.querySelector('.chain-toast');if(old)old.remove();
   const el=document.createElement('div');el.className='chain-toast';el.textContent=text;document.body.appendChild(el);
@@ -410,10 +532,13 @@ function updateChainLocks(){
     b.setAttribute('aria-disabled',locked?'true':'false');
   });
   const status=$('#chainStatus');if(status)status.textContent=`${Math.min(chainProgress,4)}/4`;
+  roomEl.classList.remove('chain-progress-0','chain-progress-1','chain-progress-2','chain-progress-3','chain-progress-4');
+  roomEl.classList.add(`chain-progress-${Math.min(chainProgress,4)}`);
   const exit=$('#exitDoor');
   if(exit){
     const ready=chainProgress>=4;
     exit.classList.toggle('chain-locked',!ready);
+    exit.classList.toggle('door-ready',ready);
     const cta=exit.querySelector('.door-cta');
     if(cta)cta.textContent=ready?'연쇄 해제 완료 · 4자리 코드 입력':`연쇄 장치 ${chainProgress}/4 · 먼저 단서를 해제`;
   }
@@ -422,13 +547,14 @@ function renderRoom(){
   const d=ROOM_DATA[stageIndex];
   chainProgress=0;activeClueIndex=null;
   stageNoEl.textContent=`ROOM ${String(stageIndex+1).padStart(2,'0')}`;stageNameEl.textContent=d.name;buildProgress();
-  roomEl.className=`room room-theme-${d.theme}`;
+  roomEl.className=`room room-theme-${d.theme}${isChainStage()?` chain-stage chain-stage-${chainStageNumber()} chain-progress-0`:''}`;
   roomEl.innerHTML=`
     <div class="wall-label">ROOM ${String(stageIndex+1).padStart(2,'0')} / ${d.order}</div>
     <div class="room-title">${d.name}</div>
-    ${isChainStage()?'<div class="chain-banner">⛓ 앞 단서를 풀어야 다음 장치가 켜집니다 <b id="chainStatus">0/4</b></div>':''}
+    ${isChainStage()?'<div class="chain-banner">⛓ 앞 단서를 풀면 방 안의 다음 장치가 실제로 열립니다 <b id="chainStatus">0/4</b></div>':''}
+    ${chainFxMarkup()}
     <div class="prop lamp"></div><div class="prop desk"></div><div class="prop shelf"></div><div class="prop window"></div>
-    ${d.clues.map((c,i)=>{const p=cluePosition(i);const chainClass=isChainStage()?(i===0?' chain-current':' chain-locked'):'';return `<button class="clue${chainClass}" data-clue="${i}" style="left:${p.l}px;top:${p.t}px;--r:${p.r}" ${isChainStage()&&i>0?'disabled':''}><div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
+    ${d.clues.map((c,i)=>{const p=cluePosition(i);const chainClass=isChainStage()?(i===0?' chain-current':' chain-locked'):'';const device=isChainStage()?`<span class="device-frame"><span class="device-cover ${chainCoverType()}"><strong>${chainCoverLabel(i)}</strong></span></span>`:'';return `<button class="clue${chainClass}" data-clue="${i}" style="left:${p.l}px;top:${p.t}px;--r:${p.r}" ${isChainStage()&&i>0?'disabled':''}>${device}<div class="tag">CLUE ${i+1} · ${c.symbol}</div><h3>${c.title}</h3><div class="clue-art ${c.kind}">${c.art}</div></button>`}).join('')}
     <button class="exit-zone ${isChainStage()?'chain-locked':''}" id="exitDoor" aria-label="4자리 번호키 출구문">
       <div class="door"><div class="keypad-preview"><div class="slots">••••</div><div class="keys">${'<i></i>'.repeat(12)}</div></div><div class="door-cta">${isChainStage()?'연쇄 장치 0/4 · 먼저 단서를 해제':'4자리 코드를 입력해 탈출'}</div></div>
     </button>`;
@@ -450,11 +576,12 @@ function submitChainAnswer(i){
     input.value='';input.focus();penalty(10);return;
   }
   chainProgress=i+1;
-  msg.textContent=chainProgress<4?`해제 성공. CLUE ${chainProgress+1} 장치가 활성화됩니다.`:'마지막 연쇄 장치 해제. 출구 번호키가 활성화됩니다.';
+  msg.textContent=chainProgress<4?`해제 성공. 방 안의 다음 장치가 열립니다.`:'마지막 장치 해제. 출구 시스템에 전원이 들어옵니다.';
   tone(680,.08,.045);setTimeout(()=>tone(900,.1,.035),90);
   updateChainLocks();
-  showChainToast(chainProgress<4?`CLUE ${chainProgress+1} 활성화`:'연쇄 해제 완료 · 출구 번호키 활성화');
-  setTimeout(()=>{if(clueDialog.open)clueDialog.close()},650);
+  if(navigator.vibrate)navigator.vibrate(chainProgress<4?[35,35,45]:[45,35,45,35,80]);
+  showChainToast(chainProgress<4?`장치 개방 · CLUE ${chainProgress+1} 발견`:'모든 장치 해제 · 출구 번호키 ONLINE');
+  setTimeout(()=>{if(clueDialog.open)clueDialog.close()},760);
 }
 function openClue(i){
   if(isChainStage() && i>chainProgress){showChainToast('앞 단서를 먼저 해결해야 합니다.');return}
@@ -494,9 +621,11 @@ function keyPress(k){createAudio();tone(300+Math.random()*120,.035,.012,'square'
 }
 function roomSolved(){
   clearInterval(timerId);tone(660,.11,.05);setTimeout(()=>tone(880,.14,.045),120);keypadDialog.close();
+  if(isChainStage()){const exit=$('#exitDoor');if(exit){exit.classList.remove('door-ready');exit.classList.add('door-open')}if(navigator.vibrate)navigator.vibrate([60,40,100])}
   const used=ROOM_DATA[stageIndex].minutes*60-remaining;
   resultContent.innerHTML=`<div class="eyebrow">ROOM CLEAR</div><h2>${stageIndex+1}번 방 탈출</h2><p>남은 시간 <b>${formatTime(remaining)}</b><br>클리어 시간 ${formatTime(used)}</p><button id="nextBtn" class="primary-btn">${stageIndex===ROOM_DATA.length-1?'최종 결과 보기':'다음 방으로'}</button>`;
-  resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}};
+  const showResult=()=>{resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}}};
+  if(isChainStage())setTimeout(showResult,760);else showResult();
 }
 function roomFailed(){
   gameActive=false;tone(110,.55,.07,'sawtooth');
