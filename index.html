@@ -24,7 +24,9 @@ button{cursor:pointer}
   radial-gradient(circle at 80% 75%,rgba(255,162,65,.16),transparent 38%),
   linear-gradient(135deg,#0d1118,#05070a 65%)}
 .start-card{width:min(92vw,460px);padding:30px;border:1px solid rgba(255,255,255,.12);border-radius:26px;background:rgba(12,17,24,.82);box-shadow:var(--shadow);backdrop-filter:blur(16px)}
-.eyebrow{letter-spacing:.28em;font-size:11px;color:var(--cyan);font-weight:800}.start-card h1{font-size:42px;margin:10px 0 12px}.start-card p{line-height:1.65;color:#c7d0d8}.start-rules{display:grid;gap:9px;margin:20px 0;color:#d5dde4;font-size:14px}.primary-btn{width:100%;border:0;border-radius:15px;padding:16px 18px;background:linear-gradient(135deg,#ffd879,#ff9e3d);color:#17100a;font-weight:900;font-size:18px;box-shadow:0 10px 35px rgba(255,173,61,.25)}.start-card small{display:block;margin-top:12px;color:#77838e;line-height:1.45}
+.eyebrow{letter-spacing:.28em;font-size:11px;color:var(--cyan);font-weight:800}.start-card h1{font-size:42px;margin:10px 0 12px}.start-card p{line-height:1.65;color:#c7d0d8}.start-rules{display:grid;gap:9px;margin:20px 0;color:#d5dde4;font-size:14px}.primary-btn{width:100%;border:0;border-radius:15px;padding:16px 18px;background:linear-gradient(135deg,#ffd879,#ff9e3d);color:#17100a;font-weight:900;font-size:18px;box-shadow:0 10px 35px rgba(255,173,61,.25)}
+.start-actions{display:grid;gap:10px}.secondary-btn{width:100%;border:1px solid rgba(255,255,255,.18);border-radius:15px;padding:14px 18px;background:#171e27;color:#eef3f7;font-weight:900;font-size:15px}.secondary-btn:active{transform:scale(.99)}
+.resume-info{margin:16px 0 10px;padding:12px 14px;border-radius:13px;background:#0c1821;border:1px solid rgba(110,231,255,.25);color:#d8f7ff;font-size:13px;line-height:1.5}.resume-info b{color:#7feaff}.start-card small{display:block;margin-top:12px;color:#77838e;line-height:1.45}
 
 .game-screen{background:#070a0e;height:100dvh;min-height:100dvh;overflow:hidden}.hud{position:fixed;z-index:50;top:0;left:0;right:0;height:88px;padding:calc(9px + env(safe-area-inset-top)) 12px 8px;display:grid;grid-template-columns:minmax(0,1fr) auto 44px;gap:10px;align-items:center;background:linear-gradient(to bottom,rgba(5,8,12,.96),rgba(5,8,12,.75),transparent)}
 .stage-pill{min-width:0}.stage-pill span{display:block;font-size:10px;color:var(--cyan);letter-spacing:.16em}.stage-pill b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;margin-top:2px}.timer{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:950;font-size:clamp(32px,8.2vw,42px);line-height:1;letter-spacing:.045em;min-width:124px;text-align:center;padding:9px 12px;border-radius:13px;color:#fff;background:#121923;border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 0 22px rgba(110,231,255,.08),0 5px 18px rgba(0,0,0,.26)}.timer.warning{color:#ffe47b;box-shadow:0 0 20px rgba(255,211,97,.22)}.timer.danger{color:#ff5c70;animation:pulse .6s infinite alternate;box-shadow:0 0 24px rgba(255,67,92,.28)}
@@ -382,8 +384,12 @@ button{cursor:pointer}
           <span>⛓ 11~15번 방은 연쇄형 단서</span>
           <span>⌛ 마지막 60초 긴장음</span>
         </div>
-        <button id="startBtn" class="primary-btn">게임 시작</button>
-        <small>첫 터치로 모바일 브라우저의 사운드 재생 권한을 활성화합니다.</small>
+        <div id="resumeInfo" class="resume-info hidden"></div>
+        <div class="start-actions">
+          <button id="startBtn" class="primary-btn">게임 시작</button>
+          <button id="newGameBtn" class="secondary-btn hidden">처음부터 하기</button>
+        </div>
+        <small>진행 상황은 이 브라우저에 자동 저장됩니다. 브라우저를 닫아도 시간이 흐르지 않습니다.</small>
       </div>
     </section>
 
@@ -617,6 +623,9 @@ ROOM_DATA[8].clues[0].art += '<div class="tiny">관측기 보정: 다음 간격�
 
 const $ = s => document.querySelector(s);
 const startScreen = $('#startScreen');
+const startBtn = $('#startBtn');
+const newGameBtn = $('#newGameBtn');
+const resumeInfo = $('#resumeInfo');
 const gameScreen = $('#gameScreen');
 const roomEl = $('#room');
 const viewport = $('#viewport');
@@ -668,7 +677,64 @@ let usedHints = new Set();
 let gameActive = false;
 let chainProgress = 0;
 let activeClueIndex = null;
+let pendingResumeState = null;
+const SAVE_KEY='time-room-save-v1';
 
+function readSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return null;
+    const data=JSON.parse(raw);
+    if(!data||data.version!==1||!Number.isInteger(data.stageIndex)||data.stageIndex<0||data.stageIndex>=ROOM_DATA.length)return null;
+    if(!Number.isFinite(data.remaining)||data.remaining<=0)return null;
+    return data;
+  }catch(e){return null}
+}
+function writeSave(data){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));return true}catch(e){return false}
+}
+function clearSave(){
+  try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+}
+function currentSavePayload(){
+  return {
+    version:1,
+    stageIndex,
+    remaining:Math.max(1,Math.floor(remaining||ROOM_DATA[stageIndex].minutes*60)),
+    chainProgress:isChainStage()?chainProgress:0,
+    usedHints:[...usedHints],
+    memo:memo?.value||'',
+    wrongAttempts,
+    wrongStreak,
+    scrollLeft:Math.round(viewport?.scrollLeft||0),
+    savedAt:Date.now()
+  };
+}
+function saveGame(){
+  if(!gameActive||stageIndex<0||stageIndex>=ROOM_DATA.length||remaining<=0)return;
+  writeSave(currentSavePayload());
+}
+function saveFreshRoom(index){
+  if(index<0||index>=ROOM_DATA.length)return clearSave();
+  writeSave({
+    version:1,stageIndex:index,remaining:ROOM_DATA[index].minutes*60,
+    chainProgress:0,usedHints:[],memo:'',wrongAttempts:0,wrongStreak:0,scrollLeft:0,savedAt:Date.now()
+  });
+}
+function refreshStartChoices(){
+  const data=readSave();
+  if(data){
+    startBtn.textContent='이어서 하기';
+    newGameBtn.classList.remove('hidden');
+    resumeInfo.classList.remove('hidden');
+    resumeInfo.innerHTML=`저장된 진행: <b>ROOM ${String(data.stageIndex+1).padStart(2,'0')} · ${ROOM_DATA[data.stageIndex].name}</b><br>남은 시간 ${formatTime(data.remaining)}`;
+  }else{
+    startBtn.textContent='게임 시작';
+    newGameBtn.classList.add('hidden');
+    resumeInfo.classList.add('hidden');
+    resumeInfo.textContent='';
+  }
+}
 function createAudio(){
   if(audioCtx && audioCtx.state==='closed'){
     audioCtx=null;sfxBus=null;bgmBus=null;bgmFilter=null;bgmNoiseBuffer=null;bgmNodes=[];
@@ -952,18 +1018,23 @@ function resetDangerState(){
   dangerStatusEl.className='danger-status stable';dangerStatusEl.textContent='STABLE';
   dangerCountdownEl.textContent='';dangerCountdownEl.style.animation='none';
 }
-function startRoomTimer(){
+function startRoomTimer(savedRemaining=null){
   clearInterval(timerId);
   roomTotalSeconds=ROOM_DATA[stageIndex].minutes*60;
-  remaining=roomTotalSeconds;
-  lastTensionSecond=null;resetDangerState();updateTimer();
-  timerId=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(timerId);roomFailed()}},1000);
+  remaining=Number.isFinite(savedRemaining)?Math.max(1,Math.min(roomTotalSeconds,Math.floor(savedRemaining))):roomTotalSeconds;
+  lastTensionSecond=null;resetDangerState();updateTimer();saveGame();
+  timerId=setInterval(()=>{
+    remaining--;updateTimer();
+    if(remaining<=0){clearInterval(timerId);roomFailed();return}
+    saveGame();
+  },1000);
 }
 function penalty(seconds, label=`−${seconds}초`){
   remaining=Math.max(1,remaining-seconds);updateTimer();
   const el=document.createElement('div');el.className='time-penalty';el.textContent=label;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
   gameScreen.classList.remove('flash-red');void gameScreen.offsetWidth;gameScreen.classList.add('flash-red');
   tone(150,.18,.055,'sawtooth');
+  saveGame();
 }
 function lockInputSystem(seconds=5){
   inputLocked=true;
@@ -1085,7 +1156,13 @@ function updateChainLocks(){
 }
 function renderRoom(){
   const d=ROOM_DATA[stageIndex];
-  chainProgress=0;activeClueIndex=null;wrongAttempts=0;wrongStreak=0;inputLocked=false;clearInterval(inputLockTimer);inputLockTimer=null;
+  const restored=pendingResumeState&&pendingResumeState.stageIndex===stageIndex?pendingResumeState:null;
+  pendingResumeState=null;
+  chainProgress=restored?Math.max(0,Math.min(4,restored.chainProgress||0)):0;
+  activeClueIndex=null;
+  wrongAttempts=restored?Math.max(0,restored.wrongAttempts||0):0;
+  wrongStreak=restored?Math.max(0,restored.wrongStreak||0):0;
+  inputLocked=false;clearInterval(inputLockTimer);inputLockTimer=null;
   stageNoEl.textContent=`ROOM ${String(stageIndex+1).padStart(2,'0')}`;stageNameEl.textContent=d.name;buildProgress();
   roomEl.className=`room room-theme-${d.theme}${isChainStage()?` chain-stage chain-stage-${chainStageNumber()} chain-progress-0`:` standard-stage standard-stage-${stageIndex+1}`}`;
   roomEl.innerHTML=`
@@ -1101,10 +1178,12 @@ function renderRoom(){
     </button>`;
   roomEl.querySelectorAll('.clue').forEach(b=>b.addEventListener('click',()=>openClue(+b.dataset.clue)));
   $('#exitDoor').addEventListener('click',openKeypad);
-  viewport.scrollLeft=0;hintIndex=0;usedHints=new Set();entered='';memo.value='';
+  viewport.scrollLeft=0;hintIndex=0;usedHints=new Set(restored?.usedHints||[]);entered='';memo.value=restored?.memo||'';
   updateChainLocks();
-  startRoomTimer();
+  startRoomTimer(restored?.remaining);
   startBgmForRoom();
+  requestAnimationFrame(()=>{viewport.scrollLeft=restored?.scrollLeft||0});
+  saveGame();
 }
 function submitChainAnswer(i){
   if(inputLocked){showChainToast('입력 시스템 잠금 중');return}
@@ -1126,6 +1205,7 @@ function submitChainAnswer(i){
   updateChainLocks();
   if(navigator.vibrate)navigator.vibrate(chainProgress<4?[35,35,45]:[45,35,45,35,80]);
   showChainToast(chainProgress<4?`장치 개방 · CLUE ${chainProgress+1} 발견`:'모든 장치 해제 · 출구 번호키 ONLINE');
+  saveGame();
   setTimeout(()=>{if(clueDialog.open)clueDialog.close()},760);
 }
 function openClue(i){
@@ -1177,6 +1257,7 @@ function roomSolved(){
   if(isChainStage()){const exit=$('#exitDoor');if(exit){exit.classList.remove('door-ready');exit.classList.add('door-open')}if(navigator.vibrate)navigator.vibrate([60,40,100])}
   else triggerStandardClearFx();
   const used=ROOM_DATA[stageIndex].minutes*60-remaining;
+  if(stageIndex<ROOM_DATA.length-1)saveFreshRoom(stageIndex+1);else clearSave();
   resultContent.innerHTML=`<div class="eyebrow">ROOM CLEAR</div><h2>${stageIndex+1}번 방 탈출</h2><p>남은 시간 <b>${formatTime(remaining)}</b><br>클리어 시간 ${formatTime(used)}</p><button id="nextBtn" class="primary-btn">${stageIndex===ROOM_DATA.length-1?'최종 결과 보기':'다음 방으로'}</button>`;
   const showResult=()=>{resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}}};
   if(isChainStage())setTimeout(showResult,760);else setTimeout(showResult,620);
@@ -1253,6 +1334,7 @@ function bigExplosion(){
   setTimeout(()=>overlay.remove(),1750);
 }
 function roomFailed(){
+  saveFreshRoom(stageIndex);
   gameActive=false;stopBgm();
   [clueDialog,keypadDialog,memoDialog,hintDialog].forEach(d=>{try{if(d.open)d.close()}catch{}});
   resetDangerState();
@@ -1311,6 +1393,7 @@ function selectHint(i){
   if(!already){
     if(!chargeHintTime())return;
     usedHints.add(i);
+    saveGame();
     renderHintChoices();
   }
   hintResult.classList.remove('empty');
@@ -1325,12 +1408,22 @@ function useHint(){
     :'1~4번 중 원하는 힌트를 선택하세요.';
   hintDialog.showModal();
 }
-function startGame(){
+function startGame(resume=false){
   if(gameActive)return;
+  const saved=resume?readSave():null;
+  if(!resume)clearSave();
+
   startScreen.classList.add('hidden');
   gameScreen.classList.remove('hidden');
   gameActive=true;
-  stageIndex=0;
+
+  if(saved){
+    stageIndex=saved.stageIndex;
+    pendingResumeState=saved;
+  }else{
+    stageIndex=0;
+    pendingResumeState=null;
+  }
   renderRoom();
 
   // Never block game entry on browser audio permission/resume.
@@ -1345,8 +1438,14 @@ function startGame(){
   }catch(e){}
 }
 
-$('#startBtn').addEventListener('click',e=>{e.preventDefault();startGame()});$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
+startBtn.addEventListener('click',e=>{e.preventDefault();startGame(!!readSave())});
+newGameBtn.addEventListener('click',e=>{e.preventDefault();startGame(false)});
+$('#hintBtn').addEventListener('click',useHint);$('#memoBtn').addEventListener('click',()=>memoDialog.showModal());
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
+memo.addEventListener('input',saveGame);
+viewport.addEventListener('scroll',()=>{if(gameActive)saveGame()},{passive:true});
+window.addEventListener('pagehide',saveGame);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame()});
 
 // Browser autoplay-policy recovery:
 // any real user gesture can re-awaken WebAudio, and returning to the tab resumes it.
@@ -1358,6 +1457,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)resumeAudi
 window.addEventListener('pageshow',resumeAudioIfNeeded);
 
 buildKeypad();
+refreshStartChoices();
 
 // Drag-to-pan: the room remains wider than the phone screen; it is never scaled down.
 let drag=false,startX=0,startScroll=0;
