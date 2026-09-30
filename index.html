@@ -275,6 +275,39 @@ button{cursor:pointer}
 @keyframes flash{50%{filter:sepia(.8) saturate(5) hue-rotate(310deg)}}
 @keyframes floatup{0%{opacity:0;transform:translate(-50%,10px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}}
 
+
+/* TIME OVER 대폭발 */
+.explosion-overlay{position:fixed;z-index:300;inset:0;overflow:hidden;pointer-events:none;background:rgba(0,0,0,0);animation:explosionDim 1.65s ease-out forwards}
+.explosion-flash{position:absolute;inset:0;background:#fff;opacity:0;animation:explosionFlash .62s ease-out forwards}
+.explosion-core{position:absolute;left:50%;top:50%;width:90px;height:90px;border-radius:50%;transform:translate(-50%,-50%) scale(.05);background:radial-gradient(circle,#fff 0 8%,#fff0a2 9% 20%,#ffb22e 21% 38%,#ff4d18 39% 58%,rgba(130,15,0,.9) 59% 72%,transparent 73%);filter:blur(.4px);box-shadow:0 0 35px #fff4ad,0 0 90px #ff8c27,0 0 180px #ff3b0a;animation:explosionCore 1.1s cubic-bezier(.12,.68,.12,1) forwards}
+.explosion-ring{position:absolute;left:50%;top:50%;width:100px;height:100px;border-radius:50%;border:8px solid rgba(255,223,135,.92);transform:translate(-50%,-50%) scale(.1);box-shadow:0 0 34px rgba(255,130,28,.7),inset 0 0 24px rgba(255,255,255,.35);animation:explosionRing 1.25s ease-out forwards}
+.explosion-ring.r2{animation-delay:.08s;border-width:4px;border-color:rgba(255,88,36,.72)}
+.explosion-ring.r3{animation-delay:.17s;border-width:2px;border-color:rgba(255,220,150,.5)}
+.explosion-smoke{position:absolute;left:50%;top:50%;width:240px;height:240px;border-radius:50%;transform:translate(-50%,-45%) scale(.2);background:radial-gradient(circle at 40% 35%,rgba(90,90,90,.8),rgba(30,30,30,.72) 45%,rgba(5,5,5,.15) 72%,transparent 74%);filter:blur(16px);opacity:0;animation:explosionSmoke 1.5s .18s ease-out forwards}
+.explosion-particle{position:absolute;left:50%;top:50%;width:var(--size);height:var(--size);margin-left:calc(var(--size)/-2);margin-top:calc(var(--size)/-2);border-radius:50%;background:var(--pc);box-shadow:0 0 10px var(--pc),0 0 22px color-mix(in srgb,var(--pc) 60%,transparent);transform:translate(-50%,-50%);animation:explosionParticle var(--dur) cubic-bezier(.08,.58,.12,1) var(--delay) forwards}
+.explosion-shard{position:absolute;left:50%;top:50%;width:var(--w);height:var(--h);background:linear-gradient(135deg,#ffcc65,#7e1a0c);clip-path:polygon(0 0,100% 30%,55% 100%);transform:translate(-50%,-50%) rotate(var(--rot));opacity:0;animation:explosionShard var(--dur) cubic-bezier(.12,.55,.18,1) var(--delay) forwards}
+.explosion-text{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.72);margin-top:150px;color:#fff2df;font:1000 clamp(34px,10vw,72px)/1 ui-monospace,monospace;letter-spacing:.12em;text-shadow:0 0 15px #ff6a2a,0 0 35px #ff2c0c,0 4px 10px #000;opacity:0;animation:explosionText 1s .34s ease-out forwards}
+#app.explosion-shake{animation:screenBlastShake .82s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes explosionFlash{0%{opacity:0}7%{opacity:1}20%{opacity:.35}45%{opacity:.08}100%{opacity:0}}
+@keyframes explosionCore{0%{transform:translate(-50%,-50%) scale(.05);opacity:0}8%{opacity:1}44%{transform:translate(-50%,-50%) scale(8.5);opacity:1}100%{transform:translate(-50%,-50%) scale(14);opacity:0}}
+@keyframes explosionRing{0%{transform:translate(-50%,-50%) scale(.1);opacity:1}100%{transform:translate(-50%,-50%) scale(15);opacity:0}}
+@keyframes explosionSmoke{0%{opacity:0;transform:translate(-50%,-45%) scale(.2)}25%{opacity:.82}100%{opacity:0;transform:translate(-50%,-72%) scale(5)}}
+@keyframes explosionParticle{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}8%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(.15)}}
+@keyframes explosionShard{0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--rot)) scale(.4)}10%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(calc(var(--rot) + 420deg)) scale(.25)}}
+@keyframes explosionText{0%{opacity:0;transform:translate(-50%,-50%) scale(.72)}28%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+@keyframes explosionDim{0%,28%{background:rgba(0,0,0,0)}68%{background:rgba(0,0,0,.3)}100%{background:rgba(0,0,0,.62)}}
+@keyframes screenBlastShake{
+  0%{transform:translate(0,0) rotate(0)}
+  8%{transform:translate(-10px,8px) rotate(-.7deg)}
+  16%{transform:translate(12px,-8px) rotate(.8deg)}
+  24%{transform:translate(-14px,-4px) rotate(-.6deg)}
+  34%{transform:translate(11px,9px) rotate(.5deg)}
+  46%{transform:translate(-8px,4px) rotate(-.35deg)}
+  60%{transform:translate(6px,-5px) rotate(.25deg)}
+  76%{transform:translate(-3px,2px) rotate(-.12deg)}
+  100%{transform:translate(0,0) rotate(0)}
+}
+
 @media (min-width:900px){.room{width:2200px;min-width:2200px}.hud{padding-left:24px;padding-right:24px}.bottom-hud{padding-left:24px;padding-right:24px}.room-title,.wall-label{left:72px}}
 
   </style>
@@ -883,10 +916,86 @@ function roomSolved(){
   const showResult=()=>{resultDialog.showModal();$('#nextBtn').onclick=()=>{resultDialog.close();if(stageIndex===ROOM_DATA.length-1){finishGame()}else{stageIndex++;renderRoom()}}};
   if(isChainStage())setTimeout(showResult,760);else setTimeout(showResult,620);
 }
+function explosionSound(){
+  createAudio();
+  if(!audioCtx)return;
+  const t=audioCtx.currentTime;
+
+  const bass=audioCtx.createOscillator(),bassGain=audioCtx.createGain();
+  bass.type='sine';
+  bass.frequency.setValueAtTime(115,t);
+  bass.frequency.exponentialRampToValueAtTime(34,t+.72);
+  bassGain.gain.setValueAtTime(.0001,t);
+  bassGain.gain.exponentialRampToValueAtTime(.34,t+.018);
+  bassGain.gain.exponentialRampToValueAtTime(.0001,t+.95);
+  bass.connect(bassGain);bassGain.connect(sfxBus||audioCtx.destination);
+  bass.start(t);bass.stop(t+1);
+
+  const noise=audioCtx.createBufferSource();
+  noise.buffer=buildNoiseBuffer();
+  const lp=audioCtx.createBiquadFilter(),ng=audioCtx.createGain();
+  lp.type='lowpass';lp.frequency.setValueAtTime(4200,t);lp.frequency.exponentialRampToValueAtTime(180,t+1.15);
+  ng.gain.setValueAtTime(.0001,t);
+  ng.gain.exponentialRampToValueAtTime(.28,t+.012);
+  ng.gain.exponentialRampToValueAtTime(.0001,t+1.25);
+  noise.connect(lp);lp.connect(ng);ng.connect(sfxBus||audioCtx.destination);
+  noise.start(t);noise.stop(t+1.3);
+
+  const crack=audioCtx.createOscillator(),cg=audioCtx.createGain();
+  crack.type='sawtooth';crack.frequency.setValueAtTime(690,t);crack.frequency.exponentialRampToValueAtTime(92,t+.18);
+  cg.gain.setValueAtTime(.13,t);cg.gain.exponentialRampToValueAtTime(.0001,t+.24);
+  crack.connect(cg);cg.connect(sfxBus||audioCtx.destination);crack.start(t);crack.stop(t+.25);
+}
+function bigExplosion(){
+  const old=document.querySelector('.explosion-overlay');if(old)old.remove();
+  const overlay=document.createElement('div');
+  overlay.className='explosion-overlay';
+  overlay.innerHTML='<div class="explosion-flash"></div><div class="explosion-core"></div><div class="explosion-ring r1"></div><div class="explosion-ring r2"></div><div class="explosion-ring r3"></div><div class="explosion-smoke"></div><div class="explosion-text">TIME OVER</div>';
+
+  const colors=['#fff2a8','#ffd05b','#ff9b29','#ff5a1f','#ff2f13'];
+  for(let i=0;i<48;i++){
+    const p=document.createElement('i');
+    p.className='explosion-particle';
+    const a=(Math.PI*2*i/48)+(Math.random()-.5)*.22;
+    const dist=180+Math.random()*520;
+    p.style.setProperty('--tx',Math.cos(a)*dist+'px');
+    p.style.setProperty('--ty',Math.sin(a)*dist+'px');
+    p.style.setProperty('--size',(4+Math.random()*12)+'px');
+    p.style.setProperty('--dur',(.72+Math.random()*.72)+'s');
+    p.style.setProperty('--delay',(Math.random()*.12)+'s');
+    p.style.setProperty('--pc',colors[Math.floor(Math.random()*colors.length)]);
+    overlay.appendChild(p);
+  }
+  for(let i=0;i<18;i++){
+    const sh=document.createElement('i');
+    sh.className='explosion-shard';
+    const a=(Math.PI*2*i/18)+(Math.random()-.5)*.5;
+    const dist=180+Math.random()*400;
+    sh.style.setProperty('--tx',Math.cos(a)*dist+'px');
+    sh.style.setProperty('--ty',Math.sin(a)*dist+'px');
+    sh.style.setProperty('--w',(7+Math.random()*13)+'px');
+    sh.style.setProperty('--h',(12+Math.random()*25)+'px');
+    sh.style.setProperty('--rot',(Math.random()*360)+'deg');
+    sh.style.setProperty('--dur',(.9+Math.random()*.7)+'s');
+    sh.style.setProperty('--delay',(Math.random()*.12)+'s');
+    overlay.appendChild(sh);
+  }
+  document.body.appendChild(overlay);
+  const app=$('#app');app.classList.remove('explosion-shake');void app.offsetWidth;app.classList.add('explosion-shake');
+  explosionSound();
+  if(navigator.vibrate)navigator.vibrate([90,35,120,35,180]);
+  setTimeout(()=>app.classList.remove('explosion-shake'),900);
+  setTimeout(()=>overlay.remove(),1750);
+}
 function roomFailed(){
-  gameActive=false;stopBgm();tone(110,.55,.07,'sawtooth');
-  resultContent.innerHTML=`<div class="eyebrow">TIME OVER</div><h2>${stageIndex+1}번 방에서 시간이 끝났습니다</h2><p>이 방의 제한시간은 ${ROOM_DATA[stageIndex].minutes}분입니다. 같은 방부터 다시 도전할 수 있습니다.</p><button id="retryBtn" class="primary-btn">이 방 다시 시작</button>`;
-  resultDialog.showModal();$('#retryBtn').onclick=()=>{resultDialog.close();gameActive=true;renderRoom()};
+  gameActive=false;stopBgm();
+  [clueDialog,keypadDialog,memoDialog].forEach(d=>{try{if(d.open)d.close()}catch{}});
+  bigExplosion();
+  resultContent.innerHTML=`<div class="eyebrow">TIME OVER</div><h2>${stageIndex+1}번 방에서 시간이 끝났습니다</h2><p>폭발과 함께 탈출에 실패했습니다.<br>이 방의 제한시간은 ${ROOM_DATA[stageIndex].minutes}분입니다.</p><button id="retryBtn" class="primary-btn">이 방 다시 시작</button>`;
+  setTimeout(()=>{
+    resultDialog.showModal();
+    $('#retryBtn').onclick=()=>{resultDialog.close();gameActive=true;renderRoom()};
+  },1450);
 }
 function finishGame(){
   clearInterval(timerId);gameActive=false;stopBgm();
